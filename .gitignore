@@ -1,0 +1,31 @@
+# Python byte-code and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Ultralytics runtime local configs & caches
+models/Ultralytics/
+*.cache
+
+# Temporary chat uploads and test inferences
+static/uploads/chat_*
+static/uploads/detected_*
+
+# Temporary database copies or logs
+*.log
+.pytest_cache/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini

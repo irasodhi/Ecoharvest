@@ -1,1026 +1,904 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EcoHarvest | AI Crop Intelligence</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Boda:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-    <style>
-        :root {
-            --primary: #4ade80;
-            --primary-light: rgba(74, 222, 128, 0.15);
-            --primary-dark: #0a5c2a;
-            --bg-dark: #0a2819;
-            --bg-gradient: linear-gradient(135deg, #0a2819 0%, #052010 100%);
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-light: rgba(255, 255, 255, 0.12);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text-white: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.7);
-        }
-
-        * {
-            cursor: none;
-            box-sizing: border-box;
-        }
-
-     body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            cursor: none;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)), 
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-
-        /* Custom Cursor */
-        .custom-cursor {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            background: rgba(74, 222, 128, 0.1);
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: screen;
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5), 
-                       inset 0 0 10px rgba(74, 222, 128, 0.3);
-            transition: width 0.1s ease, height 0.1s ease, transform 0.3s ease;
-        }
-
-        .custom-cursor.active {
-            width: 50px;
-            height: 50px;
-            border-width: 3px;
-            box-shadow: 0 0 20px rgba(74, 222, 128, 0.8), 
-                       inset 0 0 15px rgba(74, 222, 128, 0.5);
-        }
-
-        .cursor-dot {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            mix-blend-mode: screen;
-            box-shadow: 0 0 5px var(--primary);
-        }
-
-        /* Typography */
-        .challenge-font { 
-            font-family: 'Boda', serif; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-        }
-        
-        .hidden { 
-            display: none !important; 
-        }
-        
-        .highlight {
-            color: var(--primary);
-            text-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
-        }
-
-        /* Navigation */
-        .glass-nav {
-            position: fixed; 
-            top: 0; 
-            width: 100%;
-            background: rgba(10, 40, 25, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 1000; 
-            padding: 1rem 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .nav-container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            padding: 0 2rem; 
-        }
-        
-        .nav-logo { 
-            color: var(--primary); 
-            text-decoration: none; 
-            font-weight: 800; 
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .logo-icon {
-            font-size: 1.8rem;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 120px 2rem 2rem;
-        }
-
-        /* Simple Input Form */
-        .simple-form {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .simple-form h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .simple-form p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 1rem;
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-        }
-
-        .input-field {
-            flex: 1;
-            position: relative;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .input-field input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
-        }
-
-        .quick-crops {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
-
-        .crop-chip {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            color: var(--text-white);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .crop-chip:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .crop-chip.active {
-            background: var(--primary);
-            color: var(--bg-dark);
-            font-weight: 600;
-        }
-
-      /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #22c55e);
-            color: #051a0f;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 1rem;
-            min-width: 150px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(74, 222, 128, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Reset Button */
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-white);
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 1rem;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            border-color: var(--primary);
-        }
-
-        /* Results Grid */
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .result-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .result-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(74, 222, 128, 0.15);
-        }
-
-        .result-card h3 {
-            color: var(--primary);
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .result-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-white);
-            margin: 0.5rem 0;
-        }
-
-        .result-card .label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-good { background: #4ade80; }
-        .status-warning { background: #fbbf24; }
-        .status-bad { background: #ef4444; }
-
-        /* Weather Card */
-        .weather-card {
-            grid-column: span 2;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.05));
-        }
-
-        .weather-item {
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .weather-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Soil Compatibility */
-        .compatibility-meter {
-            margin-top: 1rem;
-        }
-
-        .soil-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
-
-        .soil-name {
-            width: 80px;
-            font-size: 0.9rem;
-        }
-
-        .soil-bar {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            margin: 0 10px;
-            overflow: hidden;
-        }
-
-        .soil-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 1s ease;
-        }
-
-        .soil-score {
-            width: 40px;
-            text-align: right;
-            font-weight: 600;
-        }
-
-        /* Organic Requirements */
-        .requirements-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .requirement-tag {
-            background: linear-gradient(135deg, #166534, #0f5e2b);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        /* Growth Timeline */
-        .timeline {
-            margin-top: 1rem;
-        }
-
-        .timeline-item {
-            display: flex;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .timeline-step {
-            width: 30px;
-            height: 30px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--bg-dark);
-            margin-right: 1rem;
-        }
-
-        .timeline-content {
-            flex: 1;
-        }
-
-        .timeline-content h4 {
-            margin: 0 0 0.3rem 0;
-            color: var(--text-white);
-        }
-
-        .timeline-content p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Alerts Section */
-        .alerts-container {
-            margin-top: 2rem;
-        }
-
-        .alert {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .alert.warning {
-            background: rgba(251, 191, 36, 0.1);
-            border-color: rgba(251, 191, 36, 0.3);
-        }
-
-        .alert.success {
-            background: rgba(74, 222, 128, 0.1);
-            border-color: rgba(74, 222, 128, 0.3);
-        }
-
-        .alert-icon {
-            font-size: 1.5rem;
-        }
-
-        .alert-content h4 {
-            margin: 0 0 0.5rem 0;
-            color: #ef4444;
-        }
-
-        .alert.warning .alert-content h4 {
-            color: #fbbf24;
-        }
-
-        .alert.success .alert-content h4 {
-            color: #4ade80;
-        }
-
-        .alert-content p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .input-group {
-                flex-direction: column;
-            }
-            
-            .weather-card {
-                grid-column: span 1;
-            }
-            
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .simple-form h1 {
-                font-size: 2.2rem;
-            }
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-left: 4px solid var(--primary);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
-            animation: slideInUp 0.3s ease;
-            max-width: 350px;
-        }
-
-        .notification.error {
-            border-left-color: #ef4444;
-        }
-
-        .notification.success {
-            border-left-color: #4ade80;
-        }
-
-        .notification.warning {
-            border-left-color: #fbbf24;
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Analysis Status */
-        .analysis-status {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
-            z-index: 1001;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* Crop Image */
-        .crop-image {
-            width: 100%;
-            height: 200px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .crop-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .crop-image:hover img {
-            transform: scale(1.05);
-        }
-
-        .image-source {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        /* API Status */
-        .api-status {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            z-index: 1002;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .api-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .api-status-dot.online {
-            background: #4ade80;
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-        }
-
-        .api-status-dot.offline {
-            background: #ef4444;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-        }
-
-        /* Autocomplete */
-        .autocomplete-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: rgba(10, 40, 25, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .suggestion-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
-        }
-
-        .suggestion-item:hover {
-            background: rgba(74, 222, 128, 0.1);
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        .suggestion-name {
-            font-weight: 600;
-            color: var(--text-white);
-            display: block;
-        }
-
-        .suggestion-scientific {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: block;
-            margin-top: 2px;
-        }
-
-        .suggestion-type {
-            display: inline-block;
-            padding: 2px 8px;
-            background: rgba(74, 222, 128, 0.2);
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: var(--primary);
-            margin-top: 5px;
-        }
-
-        /* Loading State */
-        .api-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-            text-align: center;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        .loading-text {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .loading-subtext {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Data Source Badge */
-        .data-source {
-            display: inline-block;
-            padding: 3px 8px;
-            background: rgba(74, 222, 128, 0.1);
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: var(--primary);
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        /* Alternative APIs Info */
-        .api-alternatives {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            border-radius: 12px;
-        }
-
-        .api-alternatives h4 {
-            color: #fbbf24;
-            margin-top: 0;
-        }
-
-        /* Action Buttons Container */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-    </style>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Guidance & Intelligence | EcoHarvest</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+
+  <style>
+    :root {
+      --primary: #34d399;
+      --primary-dark: #059669;
+      --bg: #030d06;
+      --glass-panel: rgba(6, 24, 13, 0.72);
+      --glass-border: rgba(52, 211, 153, 0.18);
+      --text-muted: rgba(255, 255, 255, 0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -10%, rgba(16,185,129,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 85% 85%, rgba(52,211,153,0.06) 0%, transparent 60%),
+        linear-gradient(rgba(3,13,6,0.80), rgba(3,13,6,0.95)),
+        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      color: #ffffff;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    .glass-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1050;
+      background: rgba(3, 13, 6, 0.90) !important;
+      backdrop-filter: blur(24px) !important;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.15) !important;
+    }
+
+    /* ── Main Layout ── */
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 116px 1.5rem 4rem;
+    }
+
+    /* ── Hero section ── */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.24);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title, h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+    .hero-title {
+      font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto 2.25rem;
+      line-height: 1.65;
+    }
+
+    /* ── Search bar card ── */
+    .search-card {
+      max-width: 720px;
+      margin: 0 auto;
+      background: rgba(6, 24, 13, 0.78);
+      backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(52, 211, 153, 0.22);
+      border-radius: 22px;
+      padding: 0.9rem;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.1);
+      display: flex;
+      gap: 0.65rem;
+      align-items: center;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .search-card:focus-within {
+      border-color: rgba(52, 211, 153, 0.55);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(52, 211, 153, 0.12);
+    }
+
+    .input-field-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      width: 17px;
+      height: 17px;
+      color: rgba(52, 211, 153, 0.6);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(52, 211, 153, 0.15);
+      border-radius: 14px;
+      padding: 13px 14px 13px 40px;
+      font-size: 0.92rem;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.32);
+    }
+
+    .search-input:focus {
+      background: rgba(0, 0, 0, 0.45);
+      border-color: #34d399;
+    }
+
+    .btn-analyze {
+      background: linear-gradient(135deg, #059669, #34d399);
+      color: #030d06;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 13px 26px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-analyze:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.5);
+      filter: brightness(1.06);
+    }
+
+    .btn-analyze:active {
+      transform: scale(0.97);
+    }
+
+    /* ── Quick crop chips ── */
+    .quick-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .crop-chip {
+      background: rgba(52, 211, 153, 0.06);
+      border: 1px solid rgba(52, 211, 153, 0.18);
+      color: rgba(255, 255, 255, 0.85);
+      padding: 0.45rem 1.05rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      user-select: none;
+    }
+
+    .crop-chip:hover {
+      background: rgba(52, 211, 153, 0.16);
+      border-color: rgba(52, 211, 153, 0.48);
+      color: #34d399;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(52, 211, 153, 0.16);
+    }
+
+    .crop-chip.active {
+      background: #34d399;
+      color: #030d06;
+      font-weight: 800;
+      border-color: #34d399;
+      box-shadow: 0 4px 16px rgba(52, 211, 153, 0.35);
+    }
+
+    /* ── Data Source Info Panel ── */
+    .source-info-panel {
+      margin: 1.75rem auto 0;
+      max-width: 720px;
+      background: rgba(6, 24, 13, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(52, 211, 153, 0.14);
+      border-radius: 16px;
+      padding: 0.95rem 1.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .source-info-title {
+      color: #34d399;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .source-info-text {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .source-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.10);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .api-status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 6px #34d399;
+    }
+    .api-status-dot.offline { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+    /* ── Autocomplete ── */
+    .autocomplete-suggestions {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: rgba(5, 22, 12, 0.98);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      border-radius: 14px;
+      max-height: 280px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: background 0.15s;
+    }
+    .suggestion-item:hover { background: rgba(52, 211, 153, 0.12); }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-name { font-weight: 700; color: #fff; font-size: 0.88rem; }
+    .suggestion-scientific { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+    .suggestion-type {
+      display: inline-block;
+      padding: 2px 7px;
+      background: rgba(52, 211, 153, 0.12);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      color: #34d399;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* ── Results Section ── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+
+    .result-card {
+      background: var(--glass-panel);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      transition: all 0.28s ease;
+    }
+
+    .result-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(52, 211, 153, 0.42);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 0 24px rgba(52, 211, 153, 0.08);
+    }
+
+    .result-card h3 {
+      color: #34d399;
+      margin: 0 0 1rem 0;
+      font-size: 0.96rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: #34d399;
+    }
+
+    .result-card .value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0.35rem 0;
+      letter-spacing: -0.02em;
+    }
+
+    .result-card .label {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    /* ── Weather card ── */
+    .weather-card {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0;
+      padding: 0;
+      background: rgba(5, 25, 13, 0.82);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+    }
+
+    .weather-item {
+      text-align: center;
+      padding: 1.4rem 1rem;
+      border-right: 1px solid rgba(52, 211, 153, 0.10);
+    }
+    .weather-item:last-child { border-right: none; }
+
+    .weather-icon-box {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: rgba(52, 211, 153, 0.10);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      margin: 0 auto 0.7rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Crop Image ── */
+    .crop-image {
+      width: 100%; height: 220px;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1.1rem;
+      position: relative;
+    }
+    .crop-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .crop-image:hover img { transform: scale(1.05); }
+
+    .image-source {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: rgba(0,0,0,0.65);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Requirements & tags ── */
+    .requirements-list { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.65rem; }
+    .requirement-tag {
+      background: rgba(5, 150, 105, 0.15);
+      color: #6ee7b7;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border: 1px solid rgba(52, 211, 153, 0.24);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── Timeline ── */
+    .timeline { margin-top: 0.75rem; }
+    .timeline-item {
+      display: flex;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .timeline-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .timeline-step {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #059669, #34d399);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.74rem;
+      color: #030d06;
+      margin-right: 0.9rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
+    }
+    .timeline-content h4 { margin: 0 0 0.22rem 0; color: #fff; font-size: 0.88rem; font-weight: 700; }
+    .timeline-content p { margin: 0; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; }
+
+    /* ── Alerts ── */
+    .alerts-container { margin-top: 2rem; }
+    .alert {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.24);
+      border-left: 3px solid #ef4444;
+      border-radius: 14px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 0.85rem;
+      display: flex; align-items: flex-start; gap: 0.9rem;
+    }
+    .alert.warning {
+      background: rgba(251, 191, 36, 0.07);
+      border-color: rgba(251, 191, 36, 0.24);
+      border-left-color: #fbbf24;
+    }
+    .alert.success {
+      background: rgba(52, 211, 153, 0.07);
+      border-color: rgba(52, 211, 153, 0.24);
+      border-left-color: #34d399;
+    }
+    .alert-icon {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .alert.warning .alert-icon { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+    .alert.success .alert-icon { background: rgba(52, 211, 153, 0.18); color: #34d399; }
+    .alert-content h4 { margin: 0 0 0.25rem 0; font-size: 0.86rem; font-weight: 700; }
+    .alert.warning .alert-content h4 { color: #fbbf24; }
+    .alert.success .alert-content h4 { color: #34d399; }
+    .alert-content p { margin: 0; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; }
+
+    /* ── Action Buttons ── */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-top: 1.75rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: rgba(52, 211, 153, 0.08);
+      color: #34d399;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 1px solid rgba(52, 211, 153, 0.24);
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover {
+      background: rgba(52, 211, 153, 0.16);
+      border-color: rgba(52, 211, 153, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* ── Loading Spinner ── */
+    .loading-spinner {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(52, 211, 153, 0.15);
+      border-radius: 50%;
+      border-top-color: #34d399;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 1rem;
+    }
+    .loading {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(3,13,6,0.3);
+      border-radius: 50%;
+      border-top-color: #030d06;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Data Source Badge ── */
+    .data-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      background: rgba(52, 211, 153, 0.10);
+      border: 1px solid rgba(52, 211, 153, 0.24);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      color: #34d399;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Notification toast ── */
+    .notification {
+      position: fixed; bottom: 24px; right: 24px;
+      background: rgba(5, 22, 12, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-left: 4px solid #34d399;
+      padding: 1rem 1.3rem;
+      border-radius: 14px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+      z-index: 1001;
+      font-size: 0.86rem;
+      animation: slideInUp 0.3s ease;
+      max-width: 340px;
+    }
+    .notification.error { border-left-color: #ef4444; }
+    .notification.warning { border-left-color: #fbbf24; }
+    @keyframes slideInUp { from { transform: translateY(60%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* .hidden removed to preserve Tailwind responsive nav */
+
+    /* ── Scrollbars ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030d06; }
+    ::-webkit-scrollbar-thumb { background: rgba(52, 211, 153, 0.3); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52, 211, 153, 0.55); }
+
+    @media (max-width: 768px) {
+      .search-card { flex-direction: column; }
+      .weather-card { grid-column: span 1; }
+      .results-grid { grid-template-columns: 1fr; }
+      .source-info-panel { flex-direction: column; align-items: flex-start; }
+      .weather-item { border-right: none; border-bottom: 1px solid rgba(52, 211, 153, 0.10); }
+      .weather-item:last-child { border-bottom: none; }
+    }
+  </style>
 </head>
 <body>
-    <div class="custom-cursor"></div>
-    <div class="cursor-dot"></div>
-<!-- API Status Indicator -->
-    <div class="api-status">
-        <span class="api-status-dot" id="apiStatusDot"></span>
-        <span id="apiStatusText">Checking API...</span>
-    </div>
-        <nav class="glass-nav fixed w-full z-5 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-              <!-- LOGO -->
-            <a href="{{ url_for('home') }}" class="nav-logo text-2xl font-bold text-green-400 flex items-center gap-2">
-                <span class="p-2 bg-green-600 rounded-lg text-white">🌿</span>
-                EcoHarvest
-            </a>
-            <div class=" md:flex gap-8 font-semibold text-gray-200 uppercase text-[10px] tracking-widest items-center">
 
-            <a href="{{ url_for('ai_chat') }}#ai-chatbot" class="nav-item hover:text-green-400">AI Chatbot</a>
-            <a href="{{ url_for('crop') }}#crop-guidance" class="nav-item hover:text-green-400">Crop Guidance</a>
-            <a href="{{ url_for('products') }}" class="nav-item hover:text-green-400">Seed Marketplace</a>
-            <a href="{{ url_for('farmers') }}#farmers" class="nav-item hover:text-green-400">Farmer Details</a>
-            <a href="{{ url_for('about') }}#about" class="nav-item hover:text-green-400">About Us</a>
+  {% include 'navbar.html' %}
 
-            <!-- AUTH LOGIC -->
-            {% if session.get('user_id') %}
-                <span class="text-green-400 lowercase">{{ session.get('user') }}</span>
-                <a href="{{ url_for('logout') }}" class="nav-item hover:text-red-400">Logout</a>
-            {% else %}
-                <a href="{{ url_for('login') }}" class="nav-item hover:text-green-400">Login</a>
-                <a href="{{ url_for('register') }}" class="nav-item hover:text-green-400">Register</a>
-            {% endif %}
+  <main class="main-container">
+
+    <!-- ══ HERO / INPUT SECTION ══ -->
+    <section id="inputSection" class="hero-section">
+      <div class="hero-badge">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        Neural Agricultural Intelligence
+      </div>
+
+      <h1 class="hero-title" id="mainHeading" style="font-family: 'Outfit', sans-serif; letter-spacing: -0.035em; font-weight: 900;">
+        Universal <span class="text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.35)]">Crop Intelligence</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Enter any crop or plant name. Get AI-powered cultivation advice, real-time weather analytics, soil compatibility, and organic farming guidelines.
+      </p>
+
+      <!-- Search Card -->
+      <div class="search-card">
+        <div class="input-field-wrap">
+          <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          <input
+            type="text"
+            id="cropInput"
+            class="search-input"
+            placeholder="Enter crop name (e.g. Strawberry, Lavender, Wheat)"
+            autocomplete="off"
+          >
+          <div class="autocomplete-suggestions" id="cropSuggestions"></div>
+        </div>
+
+        <div class="input-field-wrap">
+          <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <input
+            type="text"
+            id="locationInput"
+            class="search-input"
+            placeholder="Your location (city)"
+          >
+        </div>
+
+        <button class="btn-analyze" id="analyzeBtn" onclick="analyzeCrop()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          Analyze Crop
+        </button>
+      </div>
+
+      <!-- Clean Quick Crop Chips -->
+      <div class="quick-chips-wrap">
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Tomato')">Tomato</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Strawberry')">Strawberry</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Lavender')">Lavender</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Basil')">Basil</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Mango')">Mango</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Quinoa')">Quinoa</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Rice')">Rice</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Wheat')">Wheat</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Potato')">Potato</button>
+        <button type="button" class="crop-chip" onclick="selectQuickCrop('Maize')">Maize</button>
+      </div>
+
+      <!-- Integrated Multi-Source Status -->
+      <div class="source-info-panel">
+        <div>
+          <div class="source-info-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Multi-Source Intelligence Engine
+          </div>
+          <p class="source-info-text">Synchronizing agricultural databases, Wikipedia botanical profiles, and real-time climate data.</p>
+        </div>
+        <div class="source-status-badge">
+          <span class="api-status-dot" id="apiStatusDot"></span>
+          <span id="apiStatusText">Live Ready</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ RESULTS SECTION ══ -->
+    <section id="resultsSection" class="hidden">
+
+      <!-- Loading State -->
+      <div id="loadingSection" class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="loading-spinner"></div>
+        <div class="text-emerald-400 font-bold text-base mb-1">Analyzing Crop Data</div>
+        <div class="text-gray-400 text-sm">Aggregating agricultural records and climate metrics...</div>
+      </div>
+
+      <!-- Results Content -->
+      <div id="resultsContent" class="hidden">
+
+        <!-- Top Actions -->
+        <div class="action-buttons">
+          <button class="btn-secondary" onclick="resetAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.78"/></svg>
+            New Search
+          </button>
+          <button class="btn-secondary" onclick="printAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Report
+          </button>
+          <button class="btn-secondary" onclick="shareAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share Analysis
+          </button>
+        </div>
+
+        <div class="text-center mb-6">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2" id="resultTitle">Crop Analysis</h2>
+          <p class="text-sm text-gray-400" id="resultSubtitle">AI-powered agronomic insights</p>
+        </div>
+
+        <div id="dataSourceIndicator" class="text-center mb-6">
+          <span class="data-source-badge" id="dataSourceBadge">Verified Database</span>
+        </div>
+
+        <!-- Crop Overview Card -->
+        <div class="result-card mb-6">
+
+          <h3 id="cropNameDisplay" class="text-2xl font-black text-white">Crop Name</h3>
+          <p id="cropScientificName" class="text-emerald-400 text-sm font-semibold italic -mt-2 mb-3"></p>
+          <p id="cropDescription" class="text-gray-300 text-sm leading-relaxed mb-5"></p>
+          <div class="flex gap-6 sm:gap-10 flex-wrap pt-4 border-t border-white/10">
+            <div>
+              <div class="label">Season</div>
+              <div class="value text-lg" id="seasonDisplay">--</div>
+            </div>
+            <div>
+              <div class="label">Growth Period</div>
+              <div class="value text-lg" id="growthPeriodDisplay">-- days</div>
+            </div>
+            <div>
+              <div class="label">Difficulty</div>
+              <div class="value text-lg" id="difficultyDisplay">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weather Panel -->
+        <div class="result-card weather-card mb-6">
+          <div class="weather-item">
+            <div class="weather-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </div>
+            <div class="label">Temperature</div>
+            <div class="value" id="currentTemp">--&deg;C</div>
+          </div>
+          <div class="weather-item">
+            <div class="weather-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <div class="label">Humidity</div>
+            <div class="value" id="humidity">--%</div>
+          </div>
+          <div class="weather-item">
+            <div class="weather-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="2" x2="8" y2="22"/><path d="M5 2h13"/><path d="M5 22h13"/></svg>
+            </div>
+            <div class="label">Rainfall</div>
+            <div class="value" id="rainfall">-- mm</div>
+          </div>
+          <div class="weather-item">
+            <div class="weather-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            </div>
+            <div class="label">Condition</div>
+            <div class="value" id="weatherCondition">--</div>
+          </div>
+        </div>
+
+        <!-- 6 Specs Grid -->
+        <div class="results-grid">
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
+              Ideal Conditions
+            </h3>
+            <div class="label">Temperature Range</div>
+            <div class="value" id="idealTemp">--&deg;C</div>
+            <div class="label mt-3">Water Requirements</div>
+            <div class="value" id="waterReq">--</div>
+            <div class="label mt-3">Sun Exposure</div>
+            <div class="value" id="sunExposure">--</div>
+          </div>
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              Soil Requirements
+            </h3>
+            <div class="label">Best Soil Type</div>
+            <div class="value" id="bestSoil">--</div>
+            <div class="label mt-3">pH Range</div>
+            <div class="value" id="phRange">--</div>
+            <div class="label mt-3">Soil Fertility</div>
+            <div class="value" id="soilFertility">--</div>
+          </div>
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
+              Yield Prediction
+            </h3>
+            <div class="label">Expected Yield</div>
+            <div class="value" id="expectedYield">-- tons/acre</div>
+            <div class="label mt-3">Harvest Time</div>
+            <div class="value" id="harvestTime">-- months</div>
+            <div class="label mt-3">Market Value</div>
+            <div class="value" id="marketValue">--</div>
+          </div>
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 19.84"/><path d="M17 8c-2 2-5 4-9 5"/><path d="M21 3c-1 2-3 6-9 9"/><path d="M21 3L3 21"/></svg></div>
+              Organic Requirements
+            </h3>
+            <div id="organicRequirements" class="requirements-list"></div>
+          </div>
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              Growth Timeline
+            </h3>
+            <div id="growthTimeline" class="timeline"></div>
+          </div>
+
+          <div class="result-card">
+            <h3>
+              <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              Pest &amp; Disease Management
+            </h3>
+            <div id="pestInfo"></div>
+          </div>
 
         </div>
 
-            
+        <!-- AI Recommendations -->
+        <div class="alerts-container">
+          <h3 class="text-emerald-400 font-extrabold text-lg mb-3 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            AI Agronomy Recommendations
+          </h3>
+          <div id="alertsContainer"></div>
         </div>
-    </nav>
 
-    <<main class="main-container">
-        <!-- Simple Input Section -->
-        <section id="inputSection" class="simple-form">
-            <h1 class="challenge-font text-5xl md:text-7xl mb-6 opacity-0 translate-y-10" id="mainHeading">
-                Universal Crop Intelligence
-            </h1>
-            <p>Enter ANY crop or plant name. Get AI-powered analysis, real-time weather insights, and organic farming guidance for optimal cultivation.</p>
-            
-            <div class="input-group">
-                <div class="input-field">
-                    <input type="text" id="cropInput" placeholder="Enter any crop (e.g., Strawberry, Lavender, Quinoa, Mango)" autocomplete="off">
-                    <div class="autocomplete-suggestions" id="cropSuggestions"></div>
-                </div>
-                <div class="input-field">
-                    <input type="text" id="locationInput" placeholder="Your location (city)">
-                </div>
-                <button class="btn-primary" id="analyzeBtn" onclick="analyzeCrop()">
-                    Analyze Crop
-                </button>
-            </div>
+        <!-- Alternative Crops -->
+        <div class="result-card mt-6">
+          <h3>
+            <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+            Similar &amp; Alternative Crops
+          </h3>
+          <div id="alternativeCrops" class="requirements-list"></div>
+        </div>
 
-            <div class="quick-crops">
-                <div class="crop-chip" onclick="selectQuickCrop('Tomato')">🍅 Tomato</div>
-                <div class="crop-chip" onclick="selectQuickCrop('Strawberry')">🍓 Strawberry</div>
-                <div class="crop-chip" onclick="selectQuickCrop('Lavender')">💜 Lavender</div>
-                <div class="crop-chip" onclick="selectQuickCrop('Basil')">🌿 Basil</div>
-                <div class="crop-chip" onclick="selectQuickCrop('Mango')">🥭 Mango</div>
-                <div class="crop-chip" onclick="selectQuickCrop('Quinoa')">🌾 Quinoa</div>
-            </div>
+        <!-- Bottom Action Bar -->
+        <div class="action-buttons">
+          <button class="btn-secondary" onclick="resetAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.78"/></svg>
+            New Search
+          </button>
+          <button class="btn-secondary" onclick="printAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Report
+          </button>
+          <button class="btn-secondary" onclick="shareAnalysis()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share Analysis
+          </button>
+        </div>
 
-            <div class="api-alternatives">
-                <h4>🌐 Powered by Multiple Data Sources</h4>
-                <p style="font-size: 0.9rem; margin: 0.5rem 0; color: var(--text-muted);">
-                    Using agricultural databases, AI analysis, and real-time weather data to provide comprehensive crop intelligence.
-                </p>
-            </div>
-        </section>
+      </div>
+    </section>
 
-        <!-- Results Section -->
-        <section id="resultsSection" class="hidden">
-            <!-- Loading State -->
-            <div id="loadingSection" class="api-loading">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">Analyzing Crop Data</div>
-                <div class="loading-subtext">Fetching information from multiple sources...</div>
-            </div>
+  </main>
 
-            <!-- Results Content -->
-            <div id="resultsContent" class="hidden">
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <button class="btn-secondary" onclick="resetAnalysis()">
-                        🔄 Reset Analysis
-                    </button>
-                    <button class="btn-secondary" onclick="printAnalysis()">
-                        🖨️ Print Report
-                    </button>
-                </div>
+  <script>
 
-                <div class="simple-form">
-                    <h1 class="challenge-font" id="resultTitle">Crop Analysis</h1>
-                    <p id="resultSubtitle">AI-powered analysis for optimal cultivation</p>
-                </div>
-
-                <!-- Data Source Indicator -->
-                <div id="dataSourceIndicator" style="text-align: center; margin-bottom: 1rem;">
-                    <span class="data-source" id="dataSourceBadge">🌐 AI Analysis</span>
-                </div>
-
-                <!-- Crop Image & Basic Info -->
-                <div class="result-card">
-                    <div class="crop-image">
-                        <img id="cropImage" src="" alt="Crop Image" onerror="handleImageError(this)">
-                        <div class="image-source" id="imageSource">Image Source</div>
-                    </div>
-                    <h3 id="cropNameDisplay">Crop Name</h3>
-                    <p id="cropScientificName" style="color: var(--primary); font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 0.5rem;"></p>
-                    <p id="cropDescription" style="color: var(--text-muted); margin-bottom: 1rem;"></p>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <div>
-                            <div class="label">Season</div>
-                            <div class="value" id="seasonDisplay">--</div>
-                        </div>
-                        <div>
-                            <div class="label">Growth Period</div>
-                            <div class="value" id="growthPeriodDisplay">-- days</div>
-                        </div>
-                        <div>
-                            <div class="label">Difficulty</div>
-                            <div class="value" id="difficultyDisplay">--</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Real-time Weather -->
-                <div class="result-card weather-card">
-                    <div class="weather-item">
-                        <div class="weather-icon">🌡️</div>
-                        <div class="label">Current Temperature</div>
-                        <div class="value" id="currentTemp">--°C</div>
-                    </div>
-                    <div class="weather-item">
-                        <div class="weather-icon">💧</div>
-                        <div class="label">Humidity</div>
-                        <div class="value" id="humidity">--%</div>
-                    </div>
-                    <div class="weather-item">
-                        <div class="weather-icon">🌧️</div>
-                        <div class="label">Rainfall</div>
-                        <div class="value" id="rainfall">-- mm</div>
-                    </div>
-                    <div class="weather-item">
-                        <div class="weather-icon">🌤️</div>
-                        <div class="label">Condition</div>
-                        <div class="value" id="weatherCondition">--</div>
-                    </div>
-                </div>
-
-                <div class="results-grid">
-                    <!-- Ideal Conditions -->
-                    <div class="result-card">
-                        <h3>🌱 Ideal Conditions</h3>
-                        <div class="label">Temperature Range</div>
-                        <div class="value" id="idealTemp">--°C</div>
-                        <div class="label">Water Requirements</div>
-                        <div class="value" id="waterReq">--</div>
-                        <div class="label">Sun Exposure</div>
-                        <div class="value" id="sunExposure">--</div>
-                    </div>
-
-                    <!-- Soil Requirements -->
-                    <div class="result-card">
-                        <h3>🌍 Soil Requirements</h3>
-                        <div class="label">Best Soil Type</div>
-                        <div class="value" id="bestSoil">--</div>
-                        <div class="label">pH Range</div>
-                        <div class="value" id="phRange">--</div>
-                        <div class="label">Soil Fertility</div>
-                        <div class="value" id="soilFertility">--</div>
-                    </div>
-
-                    <!-- Yield Prediction -->
-                    <div class="result-card">
-                        <h3>📈 Yield Prediction</h3>
-                        <div class="label">Expected Yield</div>
-                        <div class="value" id="expectedYield">-- tons/acre</div>
-                        <div class="label">Harvest Time</div>
-                        <div class="value" id="harvestTime">-- months</div>
-                        <div class="label">Market Value</div>
-                        <div class="value" id="marketValue">--</div>
-                    </div>
-
-                    <!-- Organic Requirements -->
-                    <div class="result-card">
-                        <h3>♻️ Organic Requirements</h3>
-                        <div id="organicRequirements" class="requirements-list"></div>
-                    </div>
-
-                    <!-- Growth Timeline -->
-                    <div class="result-card">
-                        <h3>📅 Growth Timeline</h3>
-                        <div id="growthTimeline" class="timeline"></div>
-                    </div>
-
-                    <!-- Pest & Disease Management -->
-                    <div class="result-card">
-                        <h3>🐛 Pest & Disease Management</h3>
-                        <div id="pestInfo"></div>
-                    </div>
-                </div>
-
-                <!-- Alerts & Recommendations -->
-                <div class="alerts-container">
-                    <h3 class="challenge-font" style="color: var(--primary); margin-bottom: 1rem;">⚠️ AI Recommendations</h3>
-                    <div id="alertsContainer"></div>
-                </div>
-
-                <!-- Alternative Crops -->
-                <div class="result-card">
-                    <h3>🌱 Similar & Alternative Crops</h3>
-                    <div id="alternativeCrops" class="requirements-list"></div>
-                </div>
-
-                <!-- Action Buttons at Bottom -->
-                <div class="action-buttons">
-                    <button class="btn-secondary" onclick="resetAnalysis()">
-                        🔄 Reset Analysis
-                    </button>
-                    <button class="btn-secondary" onclick="printAnalysis()">
-                        🖨️ Print Report
-                    </button>
-                    <button class="btn-secondary" onclick="shareAnalysis()">
-                        📤 Share Analysis
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
         // Enhanced Crop Database with detailed data for common crops
         const cropDatabase = {
             Wheat: {
@@ -1299,9 +1177,9 @@
 
         // Weather Condition Icons
         const weatherIcons = {
-            'Clear': '☀️', 'Clouds': '☁️', 'Rain': '🌧️', 'Drizzle': '🌦️',
-            'Thunderstorm': '⛈️', 'Snow': '❄️', 'Mist': '🌫️', 'Fog': '🌁',
-            'Haze': '😶‍🌫️'
+            'Clear': 'Sunny', 'Clouds': 'Cloudy', 'Rain': 'Rainy', 'Drizzle': 'Light Rain',
+            'Thunderstorm': 'Stormy', 'Snow': 'Snowy', 'Mist': 'Misty', 'Fog': 'Foggy',
+            'Haze': 'Hazy'
         };
 // Plant Categories Database
         const PLANT_CATEGORIES = {
@@ -1332,13 +1210,13 @@
             const statusText = document.getElementById('apiStatusText');
             
             const statusLabels = {
-                'online': '✅ Online',
-                'offline': '⚠️ Offline',
-                'ai': '🤖 AI Mode'
+                'online': 'Online',
+                'offline': 'Offline',
+                'ai': 'AI Active'
             };
             
             statusDot.className = `api-status-dot ${status}`;
-            statusText.textContent = statusLabels[status] || '🌐 Checking...';
+            statusText.textContent = statusLabels[status] || 'Connected';
         }
 
         // Select Quick Crop
@@ -1371,7 +1249,7 @@
             // Update button state
             const analyzeBtn = document.getElementById('analyzeBtn');
             const originalText = analyzeBtn.innerHTML;
-            analyzeBtn.innerHTML = '🔄 Analyzing...';
+            analyzeBtn.innerHTML = '<span class="loading"></span> Analyzing...';
             analyzeBtn.disabled = true;
 
             try {
@@ -1657,7 +1535,7 @@
             
             // Update data source indicator
             const isInDatabase = cropDatabase[cropData.name];
-            document.getElementById('dataSourceBadge').textContent = isInDatabase ? '📊 Database' : '🤖 AI Generated';
+            document.getElementById('dataSourceBadge').textContent = isInDatabase ? 'Verified Database' : 'Neural AI Model';
             
             // Update basic info
             document.getElementById('resultTitle').textContent = `${cropData.name.toUpperCase()} ANALYSIS`;
@@ -1677,10 +1555,11 @@
             
             document.getElementById('cropDescription').textContent = cropData.description;
             
-            // Set crop image
+            // Crop image removed as requested
             const cropImage = document.getElementById('cropImage');
-            cropImage.src = cropData.image || 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&auto=format&fit=crop';
-            document.getElementById('imageSource').textContent = cropData.imageSource || 'Image Source';
+            if (cropImage) cropImage.src = cropData.image || '';
+            const imgSource = document.getElementById('imageSource');
+            if (imgSource) imgSource.textContent = cropData.imageSource || '';
             
             // Update basic stats
             document.getElementById('seasonDisplay').textContent = cropData.season || '--';
@@ -1693,7 +1572,7 @@
                 document.getElementById('humidity').textContent = `${weatherData.humidity}%`;
                 document.getElementById('rainfall').textContent = `${weatherData.rain || 0} mm`;
                 document.getElementById('weatherCondition').textContent = 
-                    `${weatherIcons[weatherData.main] || '🌤️'} ${weatherData.description}`;
+                    weatherData.description ? (weatherData.description.charAt(0).toUpperCase() + weatherData.description.slice(1)) : (weatherIcons[weatherData.main] || weatherData.main);
             } else if (location) {
                 document.getElementById('currentTemp').textContent = 'Weather data unavailable';
                 document.getElementById('humidity').textContent = '--';
@@ -1728,13 +1607,13 @@
                 cropData.organicRequirements.forEach(req => {
                     const tag = document.createElement('span');
                     tag.className = 'requirement-tag';
-                    tag.textContent = `🌿 ${req}`;
+                    tag.textContent = req;
                     organicContainer.appendChild(tag);
                 });
             } else {
-                organicContainer.innerHTML = '<span class="requirement-tag">🌿 Organic Compost</span>' +
-                                           '<span class="requirement-tag">🌿 Crop Rotation</span>' +
-                                           '<span class="requirement-tag">🌿 Natural Pest Control</span>';
+                organicContainer.innerHTML = '<span class="requirement-tag">Organic Compost</span>' +
+                                           '<span class="requirement-tag">Crop Rotation</span>' +
+                                           '<span class="requirement-tag">Natural Pest Control</span>';
             }
             
             // Update growth timeline
@@ -1819,7 +1698,7 @@
             similarCrops.forEach(crop => {
                 const tag = document.createElement('span');
                 tag.className = 'requirement-tag';
-                tag.textContent = `🌱 ${crop}`;
+                tag.textContent = crop;
                 tag.style.cursor = 'pointer';
                 tag.onclick = () => {
                     document.getElementById('cropInput').value = crop;
@@ -1834,7 +1713,7 @@
                     if (!similarCrops.includes(crop)) {
                         const tag = document.createElement('span');
                         tag.className = 'requirement-tag';
-                        tag.textContent = `🌱 ${crop}`;
+                        tag.textContent = crop;
                         tag.style.cursor = 'pointer';
                         tag.onclick = () => {
                             document.getElementById('cropInput').value = crop;
@@ -1871,21 +1750,21 @@
             
             alerts.push({
                 type: 'success',
-                title: '📅 Planting Season',
+                title: 'Planting Season',
                 message: `Best planting time for ${cropData.name}: ${cropData.season}. Current season is ${currentSeason}.`
             });
             
             // Soil preparation
             alerts.push({
                 type: 'success',
-                title: '🌱 Soil Preparation',
+                title: 'Soil Preparation',
                 message: `Prepare soil with organic compost. Target pH: ${cropData.phRange}. Use ${cropData.bestSoil} for best results.`
             });
             
             // Water management
             alerts.push({
                 type: 'success',
-                title: '💧 Water Management',
+                title: 'Water Management',
                 message: `Water requirements: ${cropData.waterReq}. Adjust irrigation based on weather conditions.`
             });
             
@@ -1903,13 +1782,13 @@
                     if (temp < minTemp - 5) {
                         alerts.push({
                             type: 'warning',
-                            title: '❄️ Temperature Alert',
+                            title: 'Low Temperature Advisory',
                             message: `Current temperature (${temp}°C) is below ideal range for ${cropData.name}. Consider waiting for warmer weather or using protective covers.`
                         });
                     } else if (temp > maxTemp + 5) {
                         alerts.push({
                             type: 'warning',
-                            title: '🔥 Temperature Alert',
+                            title: 'High Temperature Advisory',
                             message: `Current temperature (${temp}°C) is above ideal range for ${cropData.name}. Provide shade and increase watering frequency.`
                         });
                     }
@@ -1919,7 +1798,7 @@
                 if (weatherData.rain > 20) {
                     alerts.push({
                         type: 'warning',
-                        title: '🌧️ Heavy Rainfall',
+                        title: 'Precipitation Advisory',
                         message: 'Heavy rainfall detected. Ensure proper drainage to prevent waterlogging.'
                     });
                 }
@@ -1929,7 +1808,7 @@
             if (cropData.organicRequirements && cropData.organicRequirements.length > 0) {
                 alerts.push({
                     type: 'success',
-                    title: '♻️ Organic Practices',
+                    title: 'Recommended Organic Practices',
                     message: `Recommended: ${cropData.organicRequirements.slice(0, 3).join(', ')}`
                 });
             }
@@ -1939,7 +1818,7 @@
                 const alertDiv = document.createElement('div');
                 alertDiv.className = `alert ${alert.type}`;
                 alertDiv.innerHTML = `
-                    <div class="alert-icon">${alert.type === 'warning' ? '⚠️' : '✅'}</div>
+                    <div class="alert-icon">${alert.type === 'warning' ? 'Notice' : 'Optimal'}</div>
                     <div class="alert-content">
                         <h4>${alert.title}</h4>
                         <p>${alert.message}</p>
@@ -2027,21 +1906,21 @@
                 </head>
                 <body>
                     <div class="report-header">
-                        <h1>🌿 EcoHarvest Crop Analysis Report</h1>
+                        <h1>EcoHarvest Crop Analysis Report</h1>
                         <h2>${document.getElementById('cropNameDisplay').textContent}</h2>
                         <p>Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
                     </div>
                     ${printContent}
                     <div class="no-print" style="margin-top: 30px; text-align: center;">
                         <button onclick="window.print()" style="padding: 10px 20px; background: #4ade80; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            🖨️ Print Report
+                            Print Report
                         </button>
                         <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-                            ❌ Close
+                            Close Window
                         </button>
                     </div>
-                </body>
-                </html>
+                
+                
             `;
             
             window.print();
@@ -2083,10 +1962,10 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             
-            let icon = 'ℹ️';
-            if (type === 'error') icon = '❌';
-            if (type === 'success') icon = '✅';
-            if (type === 'warning') icon = '⚠️';
+            let icon = 'ℹ';
+            if (type === 'error') icon = '';
+            if (type === 'success') icon = '';
+            if (type === 'warning') icon = '';
             
             notification.innerHTML = `
                 <div style="font-weight: 600; margin-bottom: 0.3rem;">
@@ -2233,7 +2112,7 @@
                     if (interactiveElements.some(selector => 
                         e.target.matches(selector) || e.target.closest(selector)
                     )) {
-                        cursor.classList.add('active');
+                        if (cursor) cursor.classList.add('active');
                     }
                 });
                 
@@ -2241,11 +2120,14 @@
                     if (interactiveElements.some(selector => 
                         e.target.matches(selector) || e.target.closest(selector)
                     )) {
-                        cursor.classList.remove('active');
+                        if (cursor) cursor.classList.remove('active');
                     }
                 });
             }
         });
-    </script>
+    
+
+
+  </script>
 </body>
 </html>

@@ -1,303 +1,1108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expert Ecosystem | EcoHarvest</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Boda:wght@700&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            cursor: none;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)), 
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #ffffff;
-        }
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-        .glass-nav { background: rgba(10, 40, 25, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(34, 197, 94, 0.3); }
-        .challenge-font { font-family: 'Boda', serif; letter-spacing: -0.02em; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Farmer Network | EcoHarvest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
-        .cursor-stalker { width: 35px; height: 35px; border: 2px solid #4ade80; border-radius: 50%; position: fixed; pointer-events: none; z-index: 200000; }
-        .cursor-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; position: fixed; pointer-events: none; z-index: 200000; }
+  <style>
+    * { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .font-heading { font-family: 'Outfit', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-        .farmer-card { 
-            background: rgba(255, 255, 255, 0.12); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            opacity: 1 !important; 
-        }
-        
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 150000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 2.5rem; padding: 2.5rem; color: #1f2937; max-height: 90vh; overflow-y: auto; pointer-events: auto; }
-    </style>
+    body {
+      background-color: #030d06;
+      background-image:
+        radial-gradient(ellipse 100% 55% at 50% 0%, rgba(52,211,153,0.16) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(16,185,129,0.06) 0%, transparent 60%),
+        linear-gradient(rgba(3,13,6,0.75), rgba(3,13,6,0.95)),
+        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .glass-nav {
+      background: rgba(3,13,6,0.90);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(52,211,153,0.15);
+    }
+
+    .glass-panel {
+      background: rgba(8,28,16,0.65);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(52,211,153,0.16);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(14px);
+      z-index: 150000; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-content {
+      background: rgba(6, 24, 13, 0.96);
+      backdrop-filter: blur(24px);
+      width: 90%; max-width: 540px;
+      border-radius: 2rem; padding: 2rem; color: #ffffff;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 40px rgba(52, 211, 153, 0.12);
+    }
+
+    /* Farmer cards */
+    .farmer-card {
+      background: rgba(6,22,12,0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(52,211,153,0.14);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .farmer-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(52,211,153,0.5);
+      box-shadow:
+        0 24px 56px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(52,211,153,0.16),
+        0 0 40px rgba(52,211,153,0.10);
+    }
+    .card-img-overlay {
+      background: linear-gradient(to top, rgba(3,13,6,0.97) 0%, rgba(3,13,6,0.5) 50%, transparent 100%);
+      opacity: 0.88; transition: opacity 0.3s;
+    }
+    .farmer-card:hover .card-img-overlay { opacity: 1; }
+
+    /* Filter & Select dropdowns */
+    .filter-select, select {
+      background-color: #061e0e !important;
+      border: 1px solid rgba(52, 211, 153, 0.35) !important;
+      color: #e2e8f0 !important;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .filter-select:focus, select:focus {
+      outline: none !important;
+      border-color: #34d399 !important;
+      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2) !important;
+    }
+    select option {
+      background-color: #061e0e !important;
+      color: #e2e8f0 !important;
+      padding: 10px;
+    }
+    select option:hover, select option:checked {
+      background-color: #0d381c !important;
+      color: #34d399 !important;
+    }
+
+    /* Stat pills */
+    .stat-pill {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.2);
+    }
+
+    /* Section divider */
+    .section-divider { border-top: 1px solid rgba(52,211,153,0.12); }
+
+    /* Stars */
+    .star-icon { display: inline; vertical-align: -2px; }
+
+    /* Toast animation */
+    @keyframes toastSlideIn {
+      0% { opacity: 0; transform: translateY(-28px) scale(0.96); }
+      70% { transform: translateY(4px) scale(1.01); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastSlideOut {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-28px) scale(0.96); }
+    }
+    @keyframes toastProgress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    .flash-toast-item {
+      animation: toastSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .flash-toast-item.dismissing {
+      animation: toastSlideOut 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+    .toast-progress {
+      animation: toastProgress 4.2s linear forwards;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030d06; }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.3); border-radius: 999px; }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(52,211,153,0); }
+    }
+    .pulse-glow { animation: pulseGlow 2.5s ease-in-out infinite; }
+  </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden flex flex-col min-h-screen">
 
-    <!-- Cursor -->
-    <div class="cursor-stalker"></div>
-    <div class="cursor-dot"></div>
+  {% include 'navbar.html' %}
 
-    <!-- Modals -->
-    <div id="booking-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 id="m-name" class="text-3xl font-bold text-green-800 mb-1 italic">Expert Name</h2>
-            <p id="m-state" class="text-xs font-bold text-green-600 uppercase tracking-widest mb-6">State</p>
-            <form class="space-y-4" onsubmit="handleBooking(event)">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] font-bold uppercase text-gray-400">Date</label><input type="date" id="b-date" required class="w-full bg-gray-100 rounded-xl p-3 text-sm border-none"></div>
-                    <div><label class="text-[10px] font-bold uppercase text-gray-400">Time</label><input type="time" id="b-time" required class="w-full bg-gray-100 rounded-xl p-3 text-sm border-none"></div>
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold uppercase text-gray-400">Guidance Mode</label>
-                    <select id="m-price" onchange="updatePrice()" class="w-full bg-gray-100 rounded-xl p-3 text-sm border-none">
-                        <option value="500">Video Call (₹500)</option>
-                        <option value="1500">Physical Visit (₹1500)</option>
-                    </select>
-                </div>
-                <div class="bg-green-50 p-4 rounded-2xl flex justify-between items-center"><span class="text-green-800 font-bold">Protocol Fee:</span><span id="final-p" class="text-2xl font-black text-green-600">₹500</span></div>
-                <button type="submit" class="gsap-interact w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-xl">Confirm Appointment</button>
-                <button type="button" onclick="closeModal('booking-modal')" class="gsap-interact w-full text-gray-400 text-xs py-2 mt-2">Go Back</button>
-            </form>
+  <!-- Modern Centered Toast Flash Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="flashToastContainer" class="fixed top-24 left-1/2 -translate-x-1/2 z-[130000] max-w-md sm:max-w-lg w-[calc(100%-2rem)] space-y-3 pointer-events-none transition-all duration-300 flex flex-col items-center">
+    {% for category, message in messages %}
+    <div class="flash-toast-item pointer-events-auto group relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300 flex items-start gap-3.5 sm:gap-4 w-full
+      {% if category == 'error' %}
+        bg-gradient-to-br from-[#1a080b]/98 to-[#0d0305]/98 border-rose-500/35 text-rose-100 shadow-rose-950/50 ring-1 ring-rose-500/20
+      {% elif category == 'success' %}
+        bg-gradient-to-br from-[#062012]/98 to-[#030e06]/98 border-emerald-500/35 text-emerald-100 shadow-emerald-950/50 ring-1 ring-emerald-500/20
+      {% else %}
+        bg-gradient-to-br from-[#071b2d]/98 to-[#030e17]/98 border-sky-500/35 text-sky-100 shadow-sky-950/50 ring-1 ring-sky-500/20
+      {% endif %}">
+      
+      <!-- Top-left ambient flare -->
+      <div class="pointer-events-none absolute -top-12 -left-12 w-32 h-32 rounded-full {% if category == 'error' %}bg-rose-500/15{% elif category == 'success' %}bg-emerald-500/15{% else %}bg-sky-500/15{% endif %} blur-2xl"></div>
+
+      <!-- Icon Badge -->
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 relative z-10
+        {% if category == 'error' %}
+          bg-gradient-to-br from-rose-500/25 to-rose-700/10 border border-rose-400/40 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.3)]
+        {% elif category == 'success' %}
+          bg-gradient-to-br from-emerald-500/25 to-emerald-700/10 border border-emerald-400/40 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.3)]
+        {% else %}
+          bg-gradient-to-br from-sky-500/25 to-sky-700/10 border border-sky-400/40 text-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.3)]
+        {% endif %}">
+        {% if category == 'error' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% elif category == 'success' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        {% endif %}
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pr-1 relative z-10">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %} opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %}"></span>
+            </span>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider {% if category == 'error' %}text-rose-300{% elif category == 'success' %}text-emerald-300{% else %}text-sky-300{% endif %}">
+              {% if category == 'error' %}Notice{% elif category == 'success' %}Blockchain Verified{% else %}Notification{% endif %}
+            </h4>
+          </div>
+          <span class="text-[10px] text-gray-400 font-medium tracking-normal">Just now</span>
         </div>
+        <p class="text-xs sm:text-[13px] font-medium leading-relaxed text-gray-100">
+          {{ message }}
+        </p>
+      </div>
+
+      <!-- Close Action -->
+      <button onclick="dismissFarmerToast(this)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 -mr-1 -mt-1 group/close relative z-10" aria-label="Dismiss">
+        <svg class="w-3.5 h-3.5 transition-transform group-hover/close:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Auto dismiss progress line -->
+      <div class="absolute bottom-0 inset-x-0 h-1 bg-black/30 overflow-hidden">
+        <div class="toast-progress h-full {% if category == 'error' %}bg-gradient-to-r from-rose-500 to-amber-500{% elif category == 'success' %}bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500{% else %}bg-gradient-to-r from-sky-400 to-indigo-400{% endif %}"></div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
 
-    <div id="appointment-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-3xl font-bold text-green-800 mb-6 uppercase tracking-tighter">Your Sessions</h2>
-            <div id="appointment-list" class="space-y-4">
-                <p class="text-gray-400 italic text-center py-10">No active appointments found.</p>
-            </div>
-            <button onclick="closeModal('appointment-modal')" class="gsap-interact w-full mt-6 bg-green-900 text-white py-4 rounded-2xl font-bold shadow-xl">Close Dashboard</button>
+  <!-- ══════════ FARMER SELF-REGISTRATION & BLOCKCHAIN VERIFICATION MODAL ══════════ -->
+  <div id="farmer-register-modal" class="modal-overlay">
+    <div class="modal-content shadow-2xl">
+      <div class="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-full mb-5"></div>
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 mb-1.5">
+            <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+            Cryptographic Anti-Fraud Registry
+          </div>
+          <h2 class="text-2xl font-black text-white leading-tight">Farmer Mentor Registration</h2>
+          <p class="text-xs text-gray-400 mt-1">Authenticate your legitimate farming credentials on the AgriStack Blockchain.</p>
         </div>
-    </div>
+        <button type="button" onclick="closeModal('farmer-register-modal')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center font-bold text-lg cursor-pointer shrink-0">
+          &times;
+        </button>
+      </div>
 
-    <div id="cancel-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold text-red-800 mb-4">Cancel Appointment</h2>
-            <p class="text-sm text-gray-500 mb-4">Please provide a reason for cancelling this guidance session.</p>
-            <textarea id="cancel-reason" class="w-full bg-gray-100 rounded-xl p-4 text-sm mb-4 outline-none h-24" placeholder="Reason for cancellation..."></textarea>
-            <div class="flex gap-2">
-                <button onclick="confirmCancellation()" class="gsap-interact flex-1 bg-red-600 text-white py-3 rounded-xl font-bold">Confirm</button>
-                <button onclick="closeModal('cancel-modal')" class="gsap-interact flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold">Back</button>
-            </div>
+      <!-- Anti-fraud Security Advisory Notice -->
+      <div class="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-500/25 mb-5 text-[11px] leading-relaxed text-emerald-200/90 flex items-start gap-2.5">
+        <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+        <div>
+          <strong class="text-white block font-bold">Anti-Impostor Verification Protocol:</strong>
+          To prevent false identity claims and protect the farming community, all applicant mentors must provide their official state agricultural land record ID and upload supporting documentation (Kisan Passbook, 7/12 extract, or Land Title).
         </div>
-    </div>
+      </div>
 
-    <!-- ===== FLASK NAVBAR ===== -->
-    <nav class="glass-nav fixed w-full z-50 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-            <!-- LOGO -->
-            <a href="{{ url_for('home') }}" class="nav-logo text-2xl font-bold text-green-400 flex items-center gap-2">
-                <span class="p-2 bg-green-600 rounded-lg text-white">🌿</span>
-                EcoHarvest
-            </a>
-
-            <!-- NAV LINKS -->
-            <div class="hidden md:flex gap-8 font-semibold text-gray-200 uppercase text-[10px] tracking-widest items-center">
-
-                <a href="{{ url_for('ai_chat') }}#ai-chatbot" class="nav-item hover:text-green-400">AI Chatbot</a>
-                <a href="{{ url_for('crop') }}#crop-guidance" class="nav-item hover:text-green-400">Crop Guidance</a>
-                <a href="{{ url_for('products') }}" class="nav-item hover:text-green-400">Seed Marketplace</a>
-                <a href="{{ url_for('farmers') }}#farmers" class="nav-item hover:text-green-400">Farmer Details</a>
-                <a href="{{ url_for('about') }}#about" class="nav-item hover:text-green-400">About Us</a>
-
-                <!-- AUTH LOGIC -->
-                {% if session.get('user_id') %}
-                    <span class="text-green-400 lowercase">{{ session.get('user') }}</span>
-                    <a href="{{ url_for('logout') }}" class="nav-item hover:text-red-400">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-item hover:text-green-400">Login</a>
-                    <a href="{{ url_for('register') }}" class="nav-item hover:text-green-400">Register</a>
-                {% endif %}
-
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero & Search Section -->
-    <section class="pt-48 pb-10 px-6 text-center">
-        <h1 class="hero-title text-5xl md:text-8xl font-extrabold text-white mb-6 leading-tight">Farmer <br><span class="text-green-400 italic">Expert Details</span></h1>
-        <div class="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/20 mb-10 text-left">
-            <p class="text-gray-300 text-sm leading-relaxed">
-                Connect with expert mentors to adopt sustainable farming practices. Search by state to find mentors offering guidance on reducing dependency on chemical fertilizers.
-            </p>
-        </div>
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 items-center">
-            <div class="flex-1 w-full p-2 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 flex gap-2">
-                <select id="s-input" class="flex-1 bg-transparent px-6 py-4 text-white focus:outline-none appearance-none cursor-pointer">
-                    <option value="" class="bg-green-900">Select State...</option>
-                    <option value="haryana" class="bg-green-900">Haryana</option>
-                    <option value="punjab" class="bg-green-900">Punjab</option>
-                    <option value="rajasthan" class="bg-green-900">Rajasthan</option>
-                </select>
-                <button onclick="scrollState()" class="gsap-interact bg-green-600 px-10 py-4 rounded-xl font-bold hover:bg-green-500">Search Experts</button>
-            </div>
-            <button onclick="openModal('appointment-modal')" class="gsap-interact bg-white text-green-900 px-8 py-5 rounded-2xl font-bold uppercase text-[10px] shadow-xl hover:scale-105 transition-transform">
-                My Appointments 📋
-            </button>
-        </div>
-    </section>
-
-    <!-- Experts Grid -->
-    <section id="expert-grid" class="py-12 px-6 pb-40">
-        <div class="max-w-7xl mx-auto space-y-32" id="main-container">
-            <div id="haryana" class="state-sec hidden border-t border-white/10 pt-10">
-                <h2 class="text-4xl font-bold challenge-font text-green-400 uppercase mb-8">Haryana Specialists</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="haryana-list"></div>
-            </div>
-            <div id="punjab" class="state-sec hidden border-t border-white/10 pt-10">
-                <h2 class="text-4xl font-bold challenge-font text-green-400 uppercase mb-8">Punjab Specialists</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="punjab-list"></div>
-            </div>
-            <div id="rajasthan" class="state-sec hidden border-t border-white/10 pt-10">
-                <h2 class="text-4xl font-bold challenge-font text-green-400 uppercase mb-8">Rajasthan Specialists</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="rajasthan-list"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- JS Logic (Cursor, Modal, Appointments) -->
-    <script>
-        gsap.registerPlugin(ScrollToPlugin);
-
-        const farmerData = [
-            {name: "Jaideep Dhayia", state: "haryana", bio: "Expert in organic terrace farming and greenhouse management.", loc: "Jind"},
-            {name: "Jay Chaudhari", state: "haryana", bio: "Soil health specialist focused on reducing chemical seed dependency.", loc: "Rohtak"},
-            {name: "Harish Sharma", state: "haryana", bio: "Organic paddy and sustainable wheat cultivation consultant.", loc: "Hisar"},
-            {name: "Preeti Singh", state: "haryana", bio: "Home gardening and urban plantation advisor.", loc: "Karnal"},
-            {name: "Amit Kumar", state: "haryana", bio: "Specialist in pesticide-free farming strategy.", loc: "Panipat"},
-            {name: "Sukhbir Singh", state: "punjab", bio: "Connecting farmers with verified organic seed networks.", loc: "Amritsar"},
-            {name: "Jaspreet Kaur", state: "punjab", bio: "Step-by-step guidance for sustainable organic vegetables.", loc: "Ludhiana"},
-            {name: "Balbir Mani", state: "punjab", bio: "Large scale sustainable wheat farming strategist.", loc: "Patiala"},
-            {name: "Daljit Sidhu", state: "punjab", bio: "Expert in climate-aware crop recommendations.", loc: "Bhatinda"},
-            {name: "Gurpreet Brar", state: "punjab", bio: "Water health and organic fertilization mentor.", loc: "Moga"},
-            {name: "Rajveer Shekhawat", state: "rajasthan", bio: "Specialist in organic arid land farming.", loc: "Jaipur"},
-            {name: "Sunita Kanwar", state: "rajasthan", bio: "Guidance on water conservation and sustainable plantation.", loc: "Jodhpur"},
-            {name: "Vikram Rathore", state: "rajasthan", bio: "Expert in organic spice cultivation and seed networks.", loc: "Udaipur"},
-            {name: "Gopal Paliwal", state: "rajasthan", bio: "Traditional desert farming and soil health mentor.", loc: "Bikaner"},
-            {name: "Anjali Vyas", state: "rajasthan", bio: "Expert in nutrient management for organic desert soils.", loc: "Ajmer"}
-        ];
-
-        farmerData.forEach(f => {
-            const list = document.getElementById(`${f.state}-list`);
-            list.innerHTML += `
-                <div class="farmer-card p-8 rounded-[2.5rem] flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold text-green-400 mb-1">${f.name}</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">${f.loc}</p>
-                        <p class="text-gray-300 text-sm mb-6 italic">"${f.bio}"</p>
-                    </div>
-                    <button onclick="openBooking('${f.name}', '${f.state.toUpperCase()}')" class="gsap-interact w-full bg-white text-green-900 py-3 rounded-xl font-black text-[10px] uppercase hover:bg-green-400 transition-all">Book Guidance</button>
-                </div>
-            `;
-        });
-
-        // Cursor Logic
-        const stalker = document.querySelector('.cursor-stalker');
-        const dot = document.querySelector('.cursor-dot');
+      <form action="{{ url_for('register_farmer') }}" method="POST" enctype="multipart/form-data" class="space-y-4" id="farmerRegisterForm">
         
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(stalker, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.3 });
-            gsap.to(dot, { x: e.clientX - 3, y: e.clientY - 3, duration: 0.1 });
-        });
+        <!-- Name & Contact -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">Full Legal Name *</label>
+            <input type="text" name="name" required placeholder="e.g. Rameshwar Patel"
+                   value="{{ session.get('user_name') or '' }}"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">Contact Phone *</label>
+            <input type="tel" name="phone" required pattern="[0-9]{10}" placeholder="10-digit Mobile Number"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
 
-        function bindCursorHovers() {
-            document.querySelectorAll('a, button, select, textarea, input, .gsap-interact').forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    gsap.to(stalker, { scale: 2.2, backgroundColor: 'rgba(74, 222, 128, 0.2)', borderColor: 'transparent', duration: 0.3 });
-                    gsap.to(dot, { scale: 1.5, background: '#4ade80', duration: 0.3 });
-                });
-                el.addEventListener('mouseleave', () => {
-                    gsap.to(stalker, { scale: 1, backgroundColor: 'transparent', borderColor: '#4ade80', duration: 0.3 });
-                    gsap.to(dot, { scale: 1, background: '#4ade80', duration: 0.3 });
-                });
-            });
+        <!-- State & District -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">State Region *</label>
+            <select name="state" required class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+              <option value="haryana">Haryana</option>
+              <option value="punjab">Punjab</option>
+              <option value="rajasthan">Rajasthan</option>
+              <option value="maharashtra">Maharashtra</option>
+              <option value="uttar pradesh">Uttar Pradesh</option>
+              <option value="madhya pradesh">Madhya Pradesh</option>
+              <option value="gujarat">Gujarat</option>
+              <option value="karnataka">Karnataka</option>
+              <option value="himachal pradesh">Himachal Pradesh</option>
+              <option value="other">Other State</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">District / Village Location *</label>
+            <input type="text" name="loc" required placeholder="e.g. Kurukshetra"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+
+        <!-- Experience & Specialization -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">Years of Experience *</label>
+            <input type="text" name="exp" required placeholder="e.g. 16 yrs"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">Crop Specialization *</label>
+            <input type="text" name="spec" required placeholder="e.g. Wheat, Drip Irrigation, Native Seeds"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+
+        <!-- Mandatory Blockchain Land Registry Verification -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-emerald-500/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+              Blockchain Document Proof
+            </span>
+            <span class="text-[10px] text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">Mandatory</span>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1 block">
+              Land Record ID / Khasra-Khatauni / Kisan Credit Number *
+            </label>
+            <input type="text" name="land_record_id" id="inputLandRecord" required
+                   placeholder="e.g. HR-KRL-2024-9182 or KK-481920"
+                   oninput="updateHashPreview()"
+                   class="w-full bg-[#030d06] text-white border border-emerald-500/40 rounded-xl p-3 text-xs font-mono uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1 block">
+              Blockchain Ledger Network *
+            </label>
+            <select name="network_name" class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+              <option value="AgriStack National Ledger">AgriStack National Digital Agriculture Ledger</option>
+              <option value="Polygon AgriChain">Polygon AgriChain (Decentralized Smart Contract)</option>
+              <option value="Ethereum Green Registry">Ethereum Green Registry (ERC-721 Land Proof)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1 block">
+              Upload Verification Document (Kisan Passbook, 7/12 Extract, Land Title) *
+            </label>
+            <input type="file" name="doc_file" id="inputDocFile" required
+                   accept=".pdf,.png,.jpg,.jpeg,.webp"
+                   onchange="updateHashPreview()"
+                   class="w-full bg-[#030d06] text-gray-300 border border-emerald-500/30 rounded-xl p-2 text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+            <span class="text-[10px] text-gray-400 mt-1 block">Accepted formats: PDF, PNG, JPG, WEBP (Max 10MB)</span>
+          </div>
+
+          <!-- Real-time SHA-256 Hash Preview Badge -->
+          <div id="hashPreviewBox" class="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/20 text-[10px] font-mono text-emerald-300/90 break-all flex items-start gap-2">
+            <span class="text-emerald-400 font-bold shrink-0">SHA-256 SEAL:</span>
+            <span id="hashPreviewVal" class="text-gray-300">Enter Land Record ID to generate digital verification seal...</span>
+          </div>
+        </div>
+
+        <!-- Bio / Practice Statement -->
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/90 mb-1 block">Farming Philosophy &amp; Advisory Bio</label>
+          <textarea name="bio" rows="2" placeholder="Briefly describe your organic farming methods, soil conservation techniques, and mentorship approach..."
+                    class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 hover:from-emerald-500 hover:to-green-400 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          Authenticate &amp; Register on Chain
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOCKCHAIN VERIFICATION CERTIFICATE MODAL ══════════ -->
+  <div id="blockchain-cert-modal" class="modal-overlay">
+    <div class="modal-content shadow-2xl relative">
+      <div class="h-1.5 w-full bg-gradient-to-r from-teal-400 via-emerald-400 to-green-500 rounded-full mb-5"></div>
+      
+      <!-- Modal Close Button -->
+      <button type="button" onclick="closeModal('blockchain-cert-modal')" class="absolute top-6 right-6 w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center font-bold text-lg cursor-pointer">
+        &times;
+      </button>
+
+      <!-- Badge & Title -->
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 mx-auto flex items-center justify-center text-emerald-300 shadow-[0_0_25px_rgba(52,211,153,0.3)] mb-3">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+        </div>
+        <span class="text-[11px] font-black uppercase tracking-widest text-emerald-400 font-mono">Official Blockchain Audit</span>
+        <h3 class="text-2xl font-black text-white mt-1" id="cert-farmer-name">Farmer Name</h3>
+        <p class="text-xs text-gray-400 mt-0.5" id="cert-farmer-loc">Location</p>
+      </div>
+
+      <!-- Verification Status Banner -->
+      <div class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-black uppercase tracking-wider text-emerald-300">Status: Authenticated Farmer</span>
+        </div>
+        <span class="text-[10px] text-emerald-400 font-mono font-bold">24,192 Block Confirmations</span>
+      </div>
+
+      <!-- Certificate Details Grid -->
+      <div class="space-y-3 bg-black/40 p-4 rounded-2xl border border-emerald-500/20 text-xs">
+        <div class="flex justify-between items-center py-1.5 border-b border-white/5">
+          <span class="text-gray-400 font-medium">State Land Record ID:</span>
+          <span class="text-white font-mono font-bold" id="cert-land-id">HR-JND-2024-8841</span>
+        </div>
+        <div class="flex justify-between items-center py-1.5 border-b border-white/5">
+          <span class="text-gray-400 font-medium">Validation Network:</span>
+          <span class="text-emerald-300 font-semibold" id="cert-network">AgriStack National Ledger</span>
+        </div>
+        <div class="flex justify-between items-center py-1.5 border-b border-white/5">
+          <span class="text-gray-400 font-medium">Advisory Experience:</span>
+          <span class="text-white font-semibold" id="cert-exp">14 yrs Verified</span>
+        </div>
+        <div class="py-1.5">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-gray-400 font-medium">Cryptographic Document Hash (SHA-256):</span>
+            <button type="button" onclick="copyCertHash()" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-bold underline cursor-pointer">Copy Hash</button>
+          </div>
+          <p class="text-[11px] font-mono text-emerald-300/90 bg-black/60 p-2.5 rounded-xl border border-emerald-500/25 break-all select-all" id="cert-hash">
+            0x4a9d72b160e5883ef029177a4128...
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-3">
+        <button type="button" onclick="closeModal('blockchain-cert-modal')"
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+          Close Verification
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CONSULTATION BOOKING MODAL ══════════ -->
+  <div id="booking-modal" class="modal-overlay">
+    <div class="modal-content shadow-2xl">
+      <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full mb-5"></div>
+      <h2 id="m-name" class="text-2xl font-black text-white mb-0.5 leading-tight">Expert Mentor</h2>
+      <p id="m-state" class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-5">State Region</p>
+
+      <form class="space-y-4" onsubmit="handleBooking(event)">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 mb-1 block">Date</label>
+            <input type="date" id="b-date" required
+              class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 mb-1 block">Time</label>
+            <input type="time" id="b-time" required
+              class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 mb-1 block">Session Mode</label>
+          <select id="m-price" onchange="updatePrice()"
+            class="w-full bg-[#030d06] text-white border border-emerald-500/30 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+            <option value="500">Video Consultation (₹500)</option>
+            <option value="1500">Field Farm Visit (₹1500)</option>
+          </select>
+        </div>
+
+        <div class="bg-emerald-950/40 p-4 rounded-2xl flex justify-between items-center border border-emerald-500/25">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5">Mentorship Fee</p>
+            <p class="text-xs text-emerald-400/80">Paid at session time</p>
+          </div>
+          <span id="final-p" class="text-3xl font-black text-emerald-400">₹500</span>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white py-3.5 rounded-xl font-bold shadow-lg transition-all text-sm hover:scale-[1.02] active:scale-[0.98]">
+          Confirm Appointment
+        </button>
+        <button type="button" onclick="closeModal('booking-modal')"
+          class="w-full text-gray-400 text-xs py-1.5 hover:text-emerald-300 transition-colors">
+          &larr; Go Back
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════ APPOINTMENTS MODAL ══════════ -->
+  <div id="appointment-modal" class="modal-overlay">
+    <div class="modal-content shadow-2xl">
+      <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full mb-5"></div>
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-white leading-tight">Scheduled Sessions</h2>
+          <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Your Appointments</p>
+        </div>
+      </div>
+      <div id="appointment-list" class="space-y-3">
+        <p class="text-gray-400 italic text-center py-8 text-sm">No active appointments found.</p>
+      </div>
+      <button onclick="closeModal('appointment-modal')"
+        class="w-full mt-6 bg-gradient-to-r from-emerald-800 to-emerald-700 hover:from-emerald-700 hover:to-emerald-600 text-white py-3.5 rounded-xl font-bold shadow-lg text-sm transition-all">
+        Close Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ CANCEL MODAL ══════════ -->
+  <div id="cancel-modal" class="modal-overlay">
+    <div class="modal-content shadow-2xl">
+      <div class="h-1 w-full bg-gradient-to-r from-rose-400 to-rose-600 rounded-full mb-5"></div>
+      <h2 class="text-xl font-bold text-rose-400 mb-1.5">Cancel Appointment</h2>
+      <p class="text-xs text-gray-400 mb-4">Please specify a reason for cancellation.</p>
+      <textarea id="cancel-reason"
+        class="w-full bg-[#030d06] text-white border border-rose-500/30 rounded-xl p-3 text-sm mb-4 outline-none h-20 focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+        placeholder="e.g. Schedule clash..."></textarea>
+      <div class="flex gap-2">
+        <button onclick="confirmCancellation()"
+          class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-2.5 rounded-xl font-bold text-xs transition-all">
+          Confirm Cancellation
+        </button>
+        <button onclick="closeModal('cancel-modal')"
+          class="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 py-2.5 rounded-xl font-bold text-xs transition-all">
+          Keep Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ HERO SECTION ══════════ -->
+  <section class="pt-40 pb-16 px-6 text-center relative">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-6 border text-xs font-bold uppercase tracking-widest"
+           style="background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.28);color:#34d399;">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block pulse-glow"></span>
+        Blockchain-Verified Agricultural Mentors
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-black text-white mb-5 leading-tight tracking-tight" style="font-family: 'Outfit', sans-serif; letter-spacing: -0.035em;">
+        Expert Farmer <span class="text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.35)]">Network</span>
+      </h1>
+
+      <p class="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto glass-panel p-5 rounded-3xl shadow-xl leading-relaxed mb-8">
+        Connect with veteran agriculturists certified with immutable blockchain land records.
+        Learn proven techniques for organic soil health, water conservation, indigenous heirloom seeds, and high-yield farming.
+      </p>
+
+      <!-- Stats pills -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+        <div class="stat-pill flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-emerald-300">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span id="expertCountDisplay">{{ farmers|length if farmers else '15+' }}</span> Experts
+        </div>
+        <div class="stat-pill flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-emerald-300">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          100% On-Chain Verified
+        </div>
+        <div class="stat-pill flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-emerald-300">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          Video &amp; Farm Visit
+        </div>
+        <div class="stat-pill flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-emerald-300">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Anti-Impostor Protection
+        </div>
+      </div>
+
+      <!-- Action & Filter Bar -->
+      <div class="flex flex-col sm:flex-row gap-3.5 items-center justify-center max-w-3xl mx-auto">
+        
+        <!-- Join as Farmer Button -->
+        <button onclick="openModal('farmer-register-modal')"
+                class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 hover:from-emerald-500 hover:to-green-400 text-white px-7 py-3.5 rounded-2xl font-bold text-xs shadow-xl shadow-emerald-700/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          <span>Join as Expert Farmer</span>
+        </button>
+
+        <!-- State Filter Dropdown -->
+        <div class="glass-panel p-1.5 rounded-2xl flex items-center gap-2 w-full sm:w-auto">
+          <span class="pl-3 text-emerald-400">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <select id="s-input" onchange="filterState()"
+            class="filter-select px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer pr-6 min-w-[190px]">
+            <option value="all">All Indian States (Pan-India)</option>
+            <option value="haryana">Haryana</option>
+            <option value="punjab">Punjab</option>
+            <option value="rajasthan">Rajasthan</option>
+            <option value="maharashtra">Maharashtra</option>
+            <option value="uttar-pradesh">Uttar Pradesh</option>
+            <option value="madhya-pradesh">Madhya Pradesh</option>
+            <option value="gujarat">Gujarat</option>
+            <option value="karnataka">Karnataka</option>
+            <option value="himachal-pradesh">Himachal Pradesh</option>
+            <option value="other-state">Other States</option>
+          </select>
+        </div>
+
+        <!-- My Appointments Button -->
+        <button onclick="openModal('appointment-modal')"
+          class="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/15 text-white px-6 py-3.5 rounded-2xl font-bold text-xs shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>My Appointments</span>
+        </button>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ EXPERTS GRID ══════════ -->
+  <section id="expert-grid" class="py-6 px-6 pb-28 max-w-7xl mx-auto w-full">
+
+    <!-- Haryana -->
+    <div id="haryana" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Haryana Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Soil Health &amp; Terrace Crops</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="haryana-list"></div>
+    </div>
+
+    <!-- Punjab -->
+    <div id="punjab" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Punjab Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Wheat, Rice &amp; Native Seeds</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="punjab-list"></div>
+    </div>
+
+    <!-- Rajasthan -->
+    <div id="rajasthan" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Rajasthan Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Arid Crops &amp; Water Conservation</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="rajasthan-list"></div>
+    </div>
+
+    <!-- Maharashtra -->
+    <div id="maharashtra" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Maharashtra Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Organic Viticulture, Desi Cotton &amp; Sugarcane</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="maharashtra-list"></div>
+    </div>
+
+    <!-- Uttar Pradesh -->
+    <div id="uttar-pradesh" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Uttar Pradesh Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Fertile Gangetic Alluvium, Heirloom Paddy &amp; Mustard</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="uttar-pradesh-list"></div>
+    </div>
+
+    <!-- Madhya Pradesh -->
+    <div id="madhya-pradesh" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Madhya Pradesh Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Sharbati Wheat, Non-GMO Soybean &amp; Desi Gram</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="madhya-pradesh-list"></div>
+    </div>
+
+    <!-- Gujarat -->
+    <div id="gujarat" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Gujarat Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Saurashtra Groundnut, Cumin &amp; Saline Soil Solutions</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="gujarat-list"></div>
+    </div>
+
+    <!-- Karnataka -->
+    <div id="karnataka" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Karnataka Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">Ragi Millets, Coffee, Arecanut &amp; Malnad Agroforestry</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="karnataka-list"></div>
+    </div>
+
+    <!-- Himachal Pradesh -->
+    <div id="himachal-pradesh" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Himachal Pradesh Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">High-Altitude Apple Orchards &amp; Mountain Terraces</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="himachal-pradesh-list"></div>
+    </div>
+
+    <!-- Other States -->
+    <div id="other-state" class="state-sec section-divider pt-12 mb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-extrabold text-emerald-400 uppercase tracking-tight flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Pan-India Registered Specialists
+        </h2>
+        <span class="text-xs text-gray-500 font-medium">National Verified Mentors</span>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="other-list"></div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 text-center mt-auto" style="background:rgba(3,8,4,0.95);border-top:1px solid rgba(52,211,153,0.10);">
+    <p class="text-gray-500 text-xs tracking-widest uppercase">
+      &copy; 2026 EcoHarvest &nbsp;&bull;&nbsp; Blockchain-Verified Agricultural Mentorship Network
+    </p>
+  </footer>
+
+  <script>
+    // ============================================================
+    // FARMER DATA FROM DATABASE
+    // ============================================================
+    const rawFarmers = {{ farmers|tojson if farmers else '[]' }};
+
+    const avatarColors = [
+      'from-emerald-700 to-teal-500',
+      'from-green-700 to-emerald-400',
+      'from-teal-700 to-green-400',
+      'from-emerald-800 to-green-500',
+      'from-green-800 to-teal-400'
+    ];
+    function avatarGrad(name) {
+      return avatarColors[name.charCodeAt(0) % avatarColors.length];
+    }
+
+    function starsHTML(rating) {
+      const full = Math.floor(rating);
+      const half = rating % 1 >= 0.5 ? 1 : 0;
+      let s = '';
+      const starSVG = `<svg class="star-icon" width="13" height="13" viewBox="0 0 24 24" fill="#fbbf24" stroke="#f59e0b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+      for (let i = 0; i < full; i++) s += starSVG;
+      if (half) s += `<span style="font-size:11px;color:#fbbf24">&#189;</span>`;
+      return s;
+    }
+
+    // ============================================================
+    // RENDER CARDS
+    // ============================================================
+    const stateMapping = {
+      'haryana': 'haryana',
+      'punjab': 'punjab',
+      'rajasthan': 'rajasthan',
+      'maharashtra': 'maharashtra',
+      'uttar pradesh': 'uttar-pradesh',
+      'uttar-pradesh': 'uttar-pradesh',
+      'up': 'uttar-pradesh',
+      'madhya pradesh': 'madhya-pradesh',
+      'madhya-pradesh': 'madhya-pradesh',
+      'mp': 'madhya-pradesh',
+      'gujarat': 'gujarat',
+      'karnataka': 'karnataka',
+      'himachal pradesh': 'himachal-pradesh',
+      'himachal-pradesh': 'himachal-pradesh',
+      'hp': 'himachal-pradesh'
+    };
+
+    const allStateIds = [
+      'haryana', 'punjab', 'rajasthan', 'maharashtra',
+      'uttar-pradesh', 'madhya-pradesh', 'gujarat',
+      'karnataka', 'himachal-pradesh', 'other-state'
+    ];
+
+    function renderFarmerCards() {
+      // Clear all state list containers
+      allStateIds.forEach(id => {
+        const listEl = document.getElementById(id === 'other-state' ? 'other-list' : `${id}-list`);
+        if (listEl) listEl.innerHTML = '';
+      });
+
+      const countsBySection = {};
+      allStateIds.forEach(id => { countsBySection[id] = 0; });
+
+      rawFarmers.forEach(f => {
+        const rawState = (f.state || '').toLowerCase().trim();
+        const sectionId = stateMapping[rawState] || 'other-state';
+        const targetListId = sectionId === 'other-state' ? 'other-list' : `${sectionId}-list`;
+
+        const list = document.getElementById(targetListId);
+        if (!list) return;
+
+        countsBySection[sectionId] = (countsBySection[sectionId] || 0) + 1;
+
+        const specs = (f.spec || '').split(',').map(s => s.trim()).filter(Boolean);
+        const specTags = specs.map(tag =>
+          `<span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold text-emerald-300 border border-emerald-500/30" style="background:rgba(52,211,153,0.08);">${tag}</span>`
+        ).join(' ');
+
+        const landId = f.land_record_id || 'CHAIN-AGRI-001';
+        const bHash = f.blockchain_hash || '0x00000000000000000000';
+        const netName = f.network_name || 'AgriStack Ledger';
+        const ratingNum = typeof f.rating === 'number' ? f.rating : 4.9;
+
+        list.innerHTML += `
+          <div class="farmer-card rounded-3xl overflow-hidden flex flex-col relative">
+
+            <!-- Avatar area -->
+            <div class="relative h-52 overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br ${avatarGrad(f.name)}"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-8xl font-black text-white/20 select-none">${f.name.charAt(0)}</span>
+              </div>
+              <div class="card-img-overlay absolute inset-0"></div>
+
+              <!-- Blockchain Verified Pill on Card Image -->
+              <div class="absolute top-3 left-3 z-10">
+                <button type="button" onclick="showCertProof('${f.name}', '${f.loc}', '${f.state}', '${landId}', '${netName}', '${bHash}', '${f.exp}')"
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/75 hover:bg-black/90 text-emerald-300 border border-emerald-400/40 shadow-lg backdrop-blur-md transition-all cursor-pointer group/cert">
+                  <svg class="w-3.5 h-3.5 text-emerald-400 group-hover/cert:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                  <span>Verified Landholder</span>
+                </button>
+              </div>
+
+              <!-- Overlaid info -->
+              <div class="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                <div>
+                  <p class="text-white font-black text-lg leading-tight drop-shadow-lg">${f.name}</p>
+                  <p class="text-emerald-300 text-[11px] font-semibold flex items-center gap-1 mt-0.5">
+                    <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    ${f.loc}, ${f.state.charAt(0).toUpperCase() + f.state.slice(1)}
+                  </p>
+                </div>
+                <span class="text-[10px] font-black px-2.5 py-1 rounded-full text-emerald-950 shadow-lg"
+                  style="background:rgba(52,211,153,0.92);">
+                  ${f.exp}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card body -->
+            <div class="p-5 flex flex-col flex-1">
+              <!-- Rating & Chain Token Row -->
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="flex items-center gap-0.5">${starsHTML(ratingNum)}</span>
+                  <span class="text-xs font-black text-yellow-300 ml-1">${ratingNum.toFixed(1)}</span>
+                </div>
+                <span class="text-[10px] font-mono text-emerald-400/80 font-bold tracking-tight">ID: ${landId}</span>
+              </div>
+
+              <!-- Bio -->
+              <p class="text-gray-400 text-xs leading-relaxed mb-4 italic flex-1">"${f.bio}"</p>
+
+              <!-- Spec tags -->
+              <div class="flex flex-wrap gap-1.5 mb-5">${specTags}</div>
+
+              <!-- Actions row -->
+              <div class="space-y-2 mt-auto">
+                <button onclick="openBooking('${f.name}', '${f.state.toUpperCase()}')"
+                  class="w-full bg-gradient-to-r from-emerald-700 to-green-500 hover:from-emerald-600 hover:to-green-400
+                    text-white py-3 rounded-2xl font-bold text-xs uppercase tracking-wider
+                    shadow-md hover:shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all
+                    flex items-center justify-center gap-2 cursor-pointer">
+                  <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  Book Session (₹${f.consultation_fee || 500})
+                </button>
+
+                <button onclick="showCertProof('${f.name}', '${f.loc}', '${f.state}', '${landId}', '${netName}', '${bHash}', '${f.exp}')"
+                  class="w-full text-center py-1.5 text-[11px] font-bold text-emerald-400/80 hover:text-emerald-300 transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                  <span>View Blockchain Proof</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        `;
+      });
+
+      // Show/hide sections based on whether they contain verified mentors
+      allStateIds.forEach(secId => {
+        const secEl = document.getElementById(secId);
+        if (secEl) {
+          secEl.style.display = (countsBySection[secId] || 0) > 0 ? 'block' : 'none';
         }
-        bindCursorHovers();
+      });
+    }
 
-        let appointments = [];
-        let currentCancelId = null;
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; bindCursorHovers(); }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function scrollState() {
-            const state = document.getElementById('s-input').value;
-            if(!state) return;
-            document.querySelectorAll('.state-sec').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById(state);
-            target.classList.remove('hidden');
-            gsap.to(window, { duration: 1.2, scrollTo: { y: `#${state}`, offsetY: 100 }, ease: "power2.inOut" });
+    // ============================================================
+    // STATE FILTERING
+    // ============================================================
+    function filterState() {
+      const selected = document.getElementById('s-input').value;
+      const sections = document.querySelectorAll('.state-sec');
+      sections.forEach(sec => {
+        if (selected === 'all') {
+          // In All mode, show sections that have cards
+          const listEl = sec.querySelector('[id$="-list"]');
+          sec.style.display = (listEl && listEl.children.length > 0) ? 'block' : 'none';
+        } else if (sec.id === selected) {
+          sec.style.display = 'block';
+        } else {
+          sec.style.display = 'none';
         }
-
-        function openBooking(name, state) {
-            document.getElementById('m-name').innerText = name;
-            document.getElementById('m-state').innerText = state;
-            document.getElementById('final-p').innerText = '₹500';
-            document.getElementById('m-price').value = 500;
-            openModal('booking-modal');
+      });
+      if (selected !== 'all') {
+        const target = document.getElementById(selected);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+      }
+    }
 
-        function updatePrice() {
-            const val = document.getElementById('m-price').value;
-            document.getElementById('final-p').innerText = `₹${val}`;
+    // ============================================================
+    // BLOCKCHAIN PROOF CERTIFICATE VIEWER
+    // ============================================================
+    function showCertProof(name, loc, state, landId, network, hash, exp) {
+      document.getElementById('cert-farmer-name').textContent = name;
+      document.getElementById('cert-farmer-loc').textContent = `${loc}, ${state.toUpperCase()}`;
+      document.getElementById('cert-land-id').textContent = landId;
+      document.getElementById('cert-network').textContent = network;
+      document.getElementById('cert-exp').textContent = `${exp} Verified Farming`;
+      document.getElementById('cert-hash').textContent = hash;
+      openModal('blockchain-cert-modal');
+    }
+
+    function copyCertHash() {
+      const hashText = document.getElementById('cert-hash').textContent.trim();
+      navigator.clipboard.writeText(hashText).then(() => {
+        alert('Cryptographic Blockchain Hash copied to clipboard: ' + hashText);
+      });
+    }
+
+    // ============================================================
+    // LIVE HASH PREVIEW IN REGISTRATION FORM
+    // ============================================================
+    async function updateHashPreview() {
+      const landId = document.getElementById('inputLandRecord').value.trim();
+      const fileInput = document.getElementById('inputDocFile');
+      const preview = document.getElementById('hashPreviewVal');
+
+      if (!landId) {
+        preview.textContent = 'Enter Land Record ID to generate digital verification seal...';
+        return;
+      }
+
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        preview.textContent = `Computing SHA-256 seal for '${file.name}' (${(file.size/1024).toFixed(1)} KB)...`;
+        
+        try {
+          const buffer = await file.arrayBuffer();
+          const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+          preview.textContent = `0x${hashHex}`;
+        } catch (e) {
+          preview.textContent = `0x${Math.random().toString(16).substring(2, 10)}... (Will be sealed on server upload)`;
         }
+      } else {
+        // Pseudo preview based on Land ID
+        preview.textContent = `0x${btoa(landId).replace(/=/g, '').toLowerCase()}${Date.now().toString(16)}... (Upload document file to seal)`;
+      }
+    }
 
-function handleBooking(e) {
-    e.preventDefault();
+    // ============================================================
+    // MODALS & LOCALSTORAGE
+    // ============================================================
+    let appointments = JSON.parse(localStorage.getItem('ecoharvest_appointments') || '[]');
+    let currentCancelId = null;
 
-    const name = document.getElementById('m-name').innerText;
-    const state = document.getElementById('m-state').innerText;
-    const date = document.getElementById('b-date').value;
-    const time = document.getElementById('b-time').value;
-    const price = document.getElementById('m-price').value;
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+      if (id === 'appointment-modal') renderAppointments();
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
 
-    appointments.push({ name, state, date, time, price });
+    function openBooking(name, state) {
+      document.getElementById('m-name').innerText = name;
+      document.getElementById('m-state').innerText = state;
+      document.getElementById('final-p').innerText = '₹500';
+      document.getElementById('m-price').value = 500;
+      openModal('booking-modal');
+    }
 
-    renderAppointments(); // ✅ THIS WAS MISSING
+    function updatePrice() {
+      const val = document.getElementById('m-price').value;
+      document.getElementById('final-p').innerText = `₹${val}`;
+    }
 
-    alert('Appointment booked successfully!');
-    closeModal('booking-modal');
-}
+    function handleBooking(e) {
+      e.preventDefault();
+      const name = document.getElementById('m-name').innerText;
+      const state = document.getElementById('m-state').innerText;
+      const date = document.getElementById('b-date').value;
+      const time = document.getElementById('b-time').value;
+      const price = document.getElementById('m-price').value;
 
+      appointments.push({ name, state, date, time, price });
+      localStorage.setItem('ecoharvest_appointments', JSON.stringify(appointments));
 
-        function confirmCancellation() {
-            if(currentCancelId !== null) {
-                appointments.splice(currentCancelId, 1);
-                currentCancelId = null;
-                closeModal('cancel-modal');
-                renderAppointments();
-            }
-        }
+      closeModal('booking-modal');
+      openModal('appointment-modal');
+    }
 
-        function renderAppointments() {
-            const list = document.getElementById('appointment-list');
-            list.innerHTML = '';
-            if(appointments.length === 0) {
-                list.innerHTML = '<p class="text-gray-400 italic text-center py-10">No active appointments found.</p>';
-                return;
-            }
-            appointments.forEach((app, idx) => {
-                list.innerHTML += `
-                    <div class="bg-green-50 p-4 rounded-2xl flex justify-between items-center">
-                        <div>
-                            <p class="font-bold">${app.name}</p>
-                            <p class="text-xs text-gray-600">${app.date} at ${app.time} | ₹${app.price}</p>
-                        </div>
-                        <button onclick="currentCancelId=${idx}; openModal('cancel-modal')" class="bg-red-600 px-4 py-2 text-white rounded-xl text-xs font-bold">Cancel</button>
-                    </div>
-                `;
-            });
-        }
+    function confirmCancellation() {
+      if (currentCancelId !== null) {
+        appointments.splice(currentCancelId, 1);
+        localStorage.setItem('ecoharvest_appointments', JSON.stringify(appointments));
+        currentCancelId = null;
+        closeModal('cancel-modal');
+        renderAppointments();
+      }
+    }
 
-    </script>
+    function renderAppointments() {
+      const list = document.getElementById('appointment-list');
+      list.innerHTML = '';
+      if (appointments.length === 0) {
+        list.innerHTML = '<p class="text-gray-400 italic text-center py-8 text-sm">No active appointments found.</p>';
+        return;
+      }
+      appointments.forEach((app, idx) => {
+        list.innerHTML += `
+          <div class="bg-emerald-950/40 p-4 rounded-2xl border border-emerald-500/20 flex justify-between items-center">
+            <div>
+              <p class="font-black text-sm text-white leading-tight">${app.name}</p>
+              <p class="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mt-0.5">${app.state}</p>
+              <p class="text-gray-400 text-xs mt-1">${app.date} &nbsp;at&nbsp; ${app.time} &nbsp;&bull;&nbsp; <strong class="text-emerald-400">₹${app.price}</strong></p>
+            </div>
+            <button onclick="currentCancelId=${idx}; openModal('cancel-modal')"
+              class="ml-3 bg-rose-600 hover:bg-rose-500 px-3 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    function dismissFarmerToast(btn) {
+      const item = btn.closest('.flash-toast-item');
+      if (item) {
+        item.classList.add('dismissing');
+        item.style.transform = 'translateY(-28px)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 280);
+      }
+    }
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.style.display = 'none';
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFarmerCards();
+
+      // Auto dismiss initial server flash messages after 4.2 seconds
+      document.querySelectorAll('.flash-toast-item').forEach(item => {
+        setTimeout(() => {
+          if (item && item.parentElement) {
+            item.classList.add('dismissing');
+            item.style.transform = 'translateY(-28px)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 280);
+          }
+        }, 4200);
+      });
+    });
+  </script>
 </body>
 </html>

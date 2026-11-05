@@ -1,105 +1,625 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product | EcoHarvest</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Seed Product | EcoHarvest Admin</title>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)),
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #fff;
-        }
-        .glass-card {
-            background: rgba(10, 40, 25, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        input, button {
-            outline: none;
-        }
-    </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #030d06;
+      color: #fff;
+      min-height: 100vh;
+    }
+    h1, h2, h3, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Ambient Hero Glow */
+    .hero-glow {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(16, 185, 129, 0.16) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 90% 90%, rgba(52, 211, 153, 0.08) 0%, transparent 60%),
+        #030d06;
+    }
+
+    /* Glass Panels */
+    .glass-card {
+      background: rgba(8, 24, 14, 0.75);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(52, 211, 153, 0.18);
+      border-radius: 1.75rem;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    /* Input styling */
+    .form-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 1rem;
+      padding: 0.85rem 1.15rem;
+      font-size: 0.875rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .form-input:focus {
+      border-color: #34d399;
+      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Weight Preset Pill */
+    .weight-preset-btn {
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #d1d5db;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .weight-preset-btn:hover {
+      border-color: rgba(52, 211, 153, 0.4);
+      color: #fff;
+      background: rgba(52, 211, 153, 0.1);
+    }
+    .weight-preset-btn.active {
+      background: #10b981;
+      border-color: #34d399;
+      color: #030d06;
+      font-weight: 800;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Upload Dropzone */
+    .dropzone {
+      border: 2px dashed rgba(52, 211, 153, 0.3);
+      border-radius: 1.25rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: #34d399;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    /* Preview Product Card */
+    .preview-card {
+      background: rgba(8, 24, 14, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 1.75rem;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030d06; }
+    ::-webkit-scrollbar-thumb { background: rgba(52, 211, 153, 0.3); border-radius: 999px; }
+    @keyframes toastProgress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    .toast-progress {
+      animation: toastProgress 4s linear forwards;
+    }
+  </style>
 </head>
+<body class="flex flex-col min-h-screen hero-glow">
 
-<body class="min-h-screen flex flex-col items-center pt-24 px-4">
+  <!-- NAVBAR -->
+  {% include 'navbar.html' %}
 
-    <!-- Heading -->
-    <h1 class="text-4xl md:text-5xl font-bold text-green-400 mb-8 text-center">
-        🌾 Add Organic Product
-    </h1>
+  <!-- Modern Toast Flash Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="flashToastContainer" class="fixed top-24 right-4 sm:right-6 z-[130000] max-w-sm sm:max-w-md w-full space-y-3 pointer-events-none transition-all duration-300">
+    {% for category, message in messages %}
+    <div class="flash-toast-item pointer-events-auto group relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300 flex items-start gap-3.5 sm:gap-4
+      {% if category == 'error' %}
+        bg-gradient-to-br from-[#1a080b]/98 to-[#0d0305]/98 border-rose-500/35 text-rose-100 shadow-rose-950/50 ring-1 ring-rose-500/20
+      {% elif category == 'success' %}
+        bg-gradient-to-br from-[#062012]/98 to-[#030e06]/98 border-emerald-500/35 text-emerald-100 shadow-emerald-950/50 ring-1 ring-emerald-500/20
+      {% else %}
+        bg-gradient-to-br from-[#071b2d]/98 to-[#030e17]/98 border-sky-500/35 text-sky-100 shadow-sky-950/50 ring-1 ring-sky-500/20
+      {% endif %}">
+      
+      <!-- Top-left ambient flare -->
+      <div class="pointer-events-none absolute -top-12 -left-12 w-32 h-32 rounded-full {% if category == 'error' %}bg-rose-500/15{% elif category == 'success' %}bg-emerald-500/15{% else %}bg-sky-500/15{% endif %} blur-2xl"></div>
 
-    <!-- Form Card -->
-    <div class="glass-card p-10 rounded-[2.5rem] shadow-xl w-full max-w-lg">
+      <!-- Icon Badge -->
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 relative z-10
+        {% if category == 'error' %}
+          bg-gradient-to-br from-rose-500/25 to-rose-700/10 border border-rose-400/40 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.3)]
+        {% elif category == 'success' %}
+          bg-gradient-to-br from-emerald-500/25 to-emerald-700/10 border border-emerald-400/40 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.3)]
+        {% else %}
+          bg-gradient-to-br from-sky-500/25 to-sky-700/10 border border-sky-400/40 text-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.3)]
+        {% endif %}">
+        {% if category == 'error' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% elif category == 'success' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        {% endif %}
+      </div>
 
-        <!-- ADD PRODUCT FORM -->
-        <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pr-1 relative z-10">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %} opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %}"></span>
+            </span>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider {% if category == 'error' %}text-rose-300{% elif category == 'success' %}text-emerald-300{% else %}text-sky-300{% endif %}">
+              {% if category == 'error' %}Notice{% elif category == 'success' %}Success{% else %}Notification{% endif %}
+            </h4>
+          </div>
+          <span class="text-[10px] text-gray-400 font-medium tracking-normal">Just now</span>
+        </div>
+        <p class="text-xs sm:text-[13px] font-medium leading-relaxed text-gray-100">
+          {{ message }}
+        </p>
+      </div>
 
-            <!-- Product Name -->
-            <div class="flex flex-col">
-                <label class="mb-2 font-semibold text-gray-200">Product Name</label>
-                <input 
-                    type="text" 
-                    name="name" 
-                    placeholder="e.g. Organic Wheat Seeds"
-                    required
-                    class="px-4 py-2 rounded-2xl bg-white/20 border border-green-400 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400"
-                >
-            </div>
+      <!-- Close Action -->
+      <button onclick="dismissAddToast(this)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 -mr-1 -mt-1 group/close relative z-10" aria-label="Dismiss">
+        <svg class="w-3.5 h-3.5 transition-transform group-hover/close:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
 
-            <!-- Product Price -->
-            <div class="flex flex-col">
-                <label class="mb-2 font-semibold text-gray-200">Price (₹)</label>
-                <input 
-                    type="number" 
-                    name="price" 
-                    placeholder="e.g. 250"
-                    required
-                    class="px-4 py-2 rounded-2xl bg-white/20 border border-green-400 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400"
-                >
-            </div>
+      <!-- Auto dismiss progress line -->
+      <div class="absolute bottom-0 inset-x-0 h-1 bg-black/30 overflow-hidden">
+        <div class="toast-progress h-full {% if category == 'error' %}bg-gradient-to-r from-rose-500 to-amber-500{% elif category == 'success' %}bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500{% else %}bg-gradient-to-r from-sky-400 to-indigo-400{% endif %}"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
 
-            <!-- Product Image -->
-            <div class="flex flex-col">
-                <label class="mb-2 font-semibold text-gray-200">Product Image</label>
-                <input 
-                    type="file" 
-                    name="image" 
-                    accept="image/*"
-                    required
-                    class="text-white"
-                >
-            </div>
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-32 pb-16">
+    
+    <!-- Top breadcrumb navigation -->
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <a href="{{ url_for('admin_orders') }}" class="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-bold">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+          <span>Admin Operations</span>
+        </a>
+        <span>/</span>
+        <span class="text-emerald-300 font-semibold">New Seed Listing</span>
+      </div>
 
-            <!-- Submit Button -->
-            <button 
-                type="submit"
-                class="bg-green-600 hover:bg-green-500 transition-all text-white font-bold py-3 rounded-2xl shadow-lg"
-            >
-                ➕ Add Product
-            </button>
-        </form>
+      <a href="{{ url_for('products') }}" target="_blank"
+         class="text-xs text-gray-400 hover:text-emerald-300 font-bold transition-colors inline-flex items-center gap-1">
+        <span>View Public Marketplace</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+      </a>
+    </div>
 
-        <!-- Links -->
-        <div class="mt-6 flex justify-between text-sm font-semibold">
-            <a href="/admin/orders" class="text-green-400 hover:text-green-300">
-                📦 View Orders
-            </a>
-            <a href="/logout" class="text-red-400 hover:text-red-300">
-                🚪 Logout
-            </a>
+    <!-- Split Screen: Form (Left) & Real-time Live Preview (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ═════════ LEFT: PRODUCT CREATION FORM ═════════ -->
+      <div class="lg:col-span-7 glass-card p-6 sm:p-8 shadow-2xl">
+        
+        <div class="mb-7">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 bg-emerald-500/10 border border-emerald-500/25">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Marketplace Creator</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight" style="font-family: 'Outfit', sans-serif; letter-spacing: -0.03em;">
+            Add New Seed Listing
+          </h1>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Publish verified organic seed batches with custom packet gram weights and pricing.
+          </p>
         </div>
 
+        <form method="POST" enctype="multipart/form-data" class="space-y-6" id="addProductForm">
+          
+          <!-- Product Name / Title -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold text-gray-200 uppercase tracking-wider">
+                Product Title &amp; Variety
+              </label>
+              <span class="text-[11px] text-gray-400">e.g. Heirloom, Desi, Hybrid</span>
+            </div>
+            <input
+              type="text"
+              name="name"
+              id="inputProductName"
+              required
+              oninput="syncLivePreview()"
+              placeholder="e.g. Certified Organic Mustard Seeds"
+              class="form-input"
+            >
+          </div>
+
+          <!-- Price & Base Packet Weight -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Price Input -->
+            <div>
+              <label class="block mb-2 text-xs font-bold text-gray-200 uppercase tracking-wider">
+                Base Price (₹ INR)
+              </label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400 font-bold text-sm">₹</span>
+                <input
+                  type="number"
+                  name="price"
+                  id="inputProductPrice"
+                  required
+                  min="1"
+                  oninput="syncLivePreview()"
+                  placeholder="e.g. 120"
+                  class="form-input pl-8"
+                >
+              </div>
+            </div>
+
+            <!-- Base Weight Input -->
+            <div>
+              <label class="block mb-2 text-xs font-bold text-gray-200 uppercase tracking-wider">
+                Base Packet Weight (Grams)
+              </label>
+              <div class="relative">
+                <input
+                  type="number"
+                  name="weight_grams"
+                  id="inputProductWeight"
+                  required
+                  min="10"
+                  step="10"
+                  value="500"
+                  oninput="syncLivePreview()"
+                  placeholder="500"
+                  class="form-input pr-10 font-mono"
+                >
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">g</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Quick Weight Presets -->
+          <div>
+            <span class="text-[11px] font-bold text-gray-400 block mb-2 uppercase tracking-wider">Quick Weight Presets:</span>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="setPresetWeight(100)" class="weight-preset-btn" data-weight="100">100g (Trial)</button>
+              <button type="button" onclick="setPresetWeight(250)" class="weight-preset-btn" data-weight="250">250g (Garden)</button>
+              <button type="button" onclick="setPresetWeight(500)" class="weight-preset-btn active" data-weight="500">500g (Standard)</button>
+              <button type="button" onclick="setPresetWeight(1000)" class="weight-preset-btn" data-weight="1000">1000g (1 kg Bulk)</button>
+            </div>
+            <p class="text-[11px] text-emerald-400/80 mt-2">
+              Buyers in the marketplace can select specific packet variants (100g, 250g, 500g, 1 kg) with automatic proportional pricing based on this standard packet rate.
+            </p>
+          </div>
+
+          <!-- Product Image Upload Dropzone -->
+          <div>
+            <label class="block mb-2 text-xs font-bold text-gray-200 uppercase tracking-wider">
+              Product Seed Photo
+            </label>
+            
+            <div class="dropzone" id="dropzoneBox" onclick="document.getElementById('fileInput').click()">
+              <input
+                type="file"
+                name="image"
+                id="fileInput"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                required
+                onchange="handleFileSelect(event)"
+                class="hidden"
+              >
+              
+              <div id="dropzonePrompt" class="flex flex-col items-center justify-center py-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                </div>
+                <p class="text-xs font-bold text-white mb-1">Click to upload or drag and drop</p>
+                <p class="text-[11px] text-gray-400">PNG, JPG, JPEG, or WEBP (Max 10 MB)</p>
+              </div>
+
+              <!-- Selected File Indicator -->
+              <div id="dropzoneFileInfo" class="hidden flex items-center justify-between gap-3 p-2 bg-emerald-950/60 border border-emerald-500/30 rounded-xl text-left">
+                <div class="flex items-center gap-3 min-w-0">
+                  <img id="uploadThumbPreview" class="w-12 h-12 rounded-lg object-cover border border-emerald-500/40 shrink-0" alt="Selected">
+                  <div class="min-w-0">
+                    <p id="uploadFileName" class="text-xs font-bold text-white truncate"></p>
+                    <p id="uploadFileSize" class="text-[10px] text-emerald-300"></p>
+                  </div>
+                </div>
+                <button type="button" onclick="clearSelectedFile(event)" class="text-gray-400 hover:text-rose-400 font-bold text-sm px-2 py-1 cursor-pointer">
+                  Change
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Publish Button -->
+          <button
+            type="submit"
+            id="publishBtn"
+            class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-extrabold py-4 px-6 rounded-2xl shadow-xl shadow-emerald-600/30 hover:scale-[1.01] active:scale-[0.99] transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Publish Seed Product to Marketplace</span>
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- ═════════ RIGHT: REAL-TIME LIVE MARKETPLACE PREVIEW ═════════ -->
+      <div class="lg:col-span-5 sticky top-32 space-y-4">
+        
+        <div class="flex items-center justify-between px-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-300">Live Customer Preview</span>
+          </div>
+          <span class="text-[11px] text-gray-500">Updates as you type</span>
+        </div>
+
+        <!-- Exact Marketplace Product Card Replica -->
+        <div class="preview-card">
+          
+          <!-- Image Container -->
+          <div class="relative h-52 overflow-hidden bg-black/60 border-b border-emerald-500/20">
+            <img
+              id="prevCardImage"
+              src="/static/images/potato.png"
+              alt="Preview"
+              class="w-full h-full object-cover transition-transform duration-300"
+            >
+            <div class="absolute inset-0 bg-gradient-to-t from-[#08180e] via-transparent to-transparent"></div>
+            
+            <span class="absolute top-3 left-3 bg-[#05140a]/90 border border-emerald-500/40 backdrop-blur-md text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Organic
+            </span>
+
+            <span class="absolute top-3 right-3 bg-black/75 border border-white/20 text-gray-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
+              Preview Card
+            </span>
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-5 flex flex-col">
+            
+            <!-- Title -->
+            <h3 id="prevCardName" class="text-base font-extrabold text-white leading-snug truncate">
+              Organic Seed Variety
+            </h3>
+
+            <!-- Price & Base Tag -->
+            <div class="flex items-center justify-between text-xs mt-1.5 mb-3">
+              <span class="font-extrabold text-emerald-400 text-sm">
+                ₹<span id="prevCardPrice">120</span> <span class="text-gray-400 font-normal text-[11px]">/ <span id="prevCardWeightUnit">500</span>g standard</span>
+              </span>
+              <span id="prevCardWeightBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300">
+                500g base
+              </span>
+            </div>
+
+            <!-- Germination Rate bar -->
+            <div class="mb-3.5">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Germination Rate</span>
+                <span class="text-[10px] font-bold text-emerald-400">&ge;92%</span>
+              </div>
+              <div class="h-1 rounded-full bg-white/10 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-600 to-green-400" style="width: 94%;"></div>
+              </div>
+            </div>
+
+            <!-- Pack Size Preview Pills -->
+            <div class="mb-3">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 block mb-1.5">
+                Specific Pack Selection:
+              </span>
+              <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] font-bold">
+                <div class="py-1 px-1 rounded-lg border border-white/10 bg-white/5 text-gray-400">100g</div>
+                <div class="py-1 px-1 rounded-lg border border-white/10 bg-white/5 text-gray-400">250g</div>
+                <div class="py-1 px-1 rounded-lg border border-emerald-400 bg-emerald-500 text-emerald-950 font-extrabold shadow-sm">500g</div>
+                <div class="py-1 px-1 rounded-lg border border-white/10 bg-white/5 text-gray-400">1 kg</div>
+              </div>
+            </div>
+
+            <!-- Mock Actions -->
+            <div class="grid grid-cols-2 gap-2 pt-3 border-t border-white/10 mt-2">
+              <div class="w-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                <span>Add to Cart</span>
+              </div>
+              <div class="w-full bg-gradient-to-r from-emerald-600 to-green-500 text-white py-2.5 rounded-xl text-xs font-bold text-center shadow-md">
+                <span>Buy Now</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Information Help Box -->
+        <div class="glass-card p-4 text-xs text-gray-400 space-y-2">
+          <p class="font-bold text-white flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Marketplace Best Practices
+          </p>
+          <p>
+            High-resolution closeups of clean seed batches and explicit variety labels (e.g., Heirloom, Desi) build buyer trust and improve germination satisfaction scores.
+          </p>
+        </div>
+
+      </div>
+
     </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-8 px-4 text-center mt-auto border-t border-emerald-500/10">
+    <p class="text-xs text-emerald-400 font-bold tracking-wide">EcoHarvest Admin Operations Center</p>
+    <p class="text-[11px] text-gray-500 mt-1">Farm-to-Farm Marketplace Management Console &bull; Confidential Admin Access</p>
+  </footer>
+
+  <script>
+    function syncLivePreview() {
+      const name = document.getElementById('inputProductName').value.trim() || 'Organic Seed Variety';
+      const price = document.getElementById('inputProductPrice').value.trim() || '120';
+      const weight = document.getElementById('inputProductWeight').value.trim() || '500';
+
+      document.getElementById('prevCardName').textContent = name;
+      document.getElementById('prevCardPrice').textContent = price;
+      document.getElementById('prevCardWeightUnit').textContent = weight;
+      document.getElementById('prevCardWeightBadge').textContent = `${weight}g base`;
+    }
+
+    function setPresetWeight(grams) {
+      document.getElementById('inputProductWeight').value = grams;
+      document.querySelectorAll('.weight-preset-btn').forEach(btn => {
+        if (parseInt(btn.dataset.weight, 10) === grams) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      syncLivePreview();
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const prompt = document.getElementById('dropzonePrompt');
+      const info = document.getElementById('dropzoneFileInfo');
+      const thumb = document.getElementById('uploadThumbPreview');
+      const prevImg = document.getElementById('prevCardImage');
+      const nameEl = document.getElementById('uploadFileName');
+      const sizeEl = document.getElementById('uploadFileSize');
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        if (thumb) thumb.src = evt.target.result;
+        if (prevImg) prevImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      if (nameEl) nameEl.textContent = file.name;
+      if (sizeEl) sizeEl.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+      if (prompt) prompt.classList.add('hidden');
+      if (info) info.classList.remove('hidden');
+    }
+
+    function clearSelectedFile(e) {
+      e.stopPropagation();
+      const input = document.getElementById('fileInput');
+      input.value = '';
+      
+      const prompt = document.getElementById('dropzonePrompt');
+      const info = document.getElementById('dropzoneFileInfo');
+      const prevImg = document.getElementById('prevCardImage');
+
+      if (prompt) prompt.classList.remove('hidden');
+      if (info) info.classList.add('hidden');
+      if (prevImg) prevImg.src = '/static/images/potato.png';
+    }
+
+    // Drag and drop event listeners
+    const dropzone = document.getElementById('dropzoneBox');
+    if (dropzone) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          document.getElementById('fileInput').files = files;
+          handleFileSelect({ target: { files: files } });
+        }
+      }, false);
+    }
+
+    document.getElementById('addProductForm').addEventListener('submit', () => {
+      const btn = document.getElementById('publishBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span>Publishing Seed Product...</span>`;
+      }
+    });
+    function dismissAddToast(btn) {
+      const item = btn.closest('.flash-toast-item');
+      if (item) {
+        item.classList.add('dismissing');
+        item.style.transform = 'translateX(40px)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 280);
+      }
+    }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.flash-toast-item').forEach(item => {
+        setTimeout(() => {
+          if (item && item.parentElement) {
+            item.classList.add('dismissing');
+            item.style.transform = 'translateX(40px)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 280);
+          }
+        }, 4200);
+      });
+    });
+  </script>
 
 </body>
 </html>

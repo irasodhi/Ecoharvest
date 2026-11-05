@@ -1,68 +1,712 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Orders | EcoHarvest</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Boda:wght@700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)),
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #fff;
-        }
-        .glass-card {
-            background: rgba(10, 40, 25, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-    </style>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Operations Console | EcoHarvest</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #030d06;
+      color: #fff;
+      min-height: 100vh;
+    }
+    h1, h2, h3, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Ambient Hero Glow */
+    .admin-hero {
+      background:
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(16, 185, 129, 0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 95% 85%, rgba(52, 211, 153, 0.08) 0%, transparent 60%),
+        #030d06;
+    }
+
+
+
+    /* Glass Panels */
+    .glass-card {
+      background: rgba(8, 24, 14, 0.72);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(52, 211, 153, 0.16);
+      border-radius: 1.5rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .glass-card:hover {
+      border-color: rgba(52, 211, 153, 0.35);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Stat KPI Card */
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(8, 26, 15, 0.85) 0%, rgba(4, 16, 8, 0.90) 100%);
+      border: 1px solid rgba(52, 211, 153, 0.18);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(52, 211, 153, 0.4);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.12);
+    }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 90px; height: 90px;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Tab navigation buttons */
+    .nav-tab-btn {
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-tab-btn.active {
+      background: #10b981;
+      color: #030d06;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+    }
+    .nav-tab-btn:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
+      color: #9ca3af;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-tab-btn:not(.active):hover {
+      color: #fff;
+      border-color: rgba(52, 211, 153, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Filter pills */
+    .filter-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      transition: all 0.18s;
+      cursor: pointer;
+    }
+    .filter-pill.active {
+      background: rgba(52, 211, 153, 0.2);
+      border: 1px solid #34d399;
+      color: #34d399;
+    }
+    .filter-pill:not(.active) {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #9ca3af;
+    }
+    .filter-pill:not(.active):hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #030d06; }
+    ::-webkit-scrollbar-thumb { background: rgba(52, 211, 153, 0.3); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52, 211, 153, 0.55); }
+    @keyframes toastProgress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    .toast-progress {
+      animation: toastProgress 4s linear forwards;
+    }
+  </style>
 </head>
-<body class="min-h-screen px-4 py-12">
+<body class="flex flex-col min-h-screen">
 
-    <div class="max-w-7xl mx-auto glass-card p-8 rounded-[2.5rem] shadow-xl">
-        <h1 class="text-4xl font-bold text-green-400 mb-8 text-center">📦 All Orders</h1>
+  {% include 'navbar.html' %}
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-left border-collapse">
-                <thead>
-                    <tr class="text-gray-200 border-b border-green-400/50">
-                        <th class="py-3 px-4">Order ID</th>
-                        <th class="py-3 px-4">User Email</th>
-                        <th class="py-3 px-4">Product Name</th>
-                        <th class="py-3 px-4">Status</th>
-                        <th class="py-3 px-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for o in orders %}
-                    <tr class="border-b border-green-400/20">
-                        <td class="py-2 px-4">{{ o[0] }}</td>
-                        <td class="py-2 px-4">{{ o[1] }}</td>
-                        <td class="py-2 px-4">{{ o[2] }}</td>
-                        <td class="py-2 px-4 capitalize">{{ o[3] }}</td>
-                        <td class="py-2 px-4">
-                            {% if o[3] == 'pending' %}
-                                <a href="/admin/order/{{ o[0] }}/approved" class="bg-green-600 hover:bg-green-500 px-3 py-1 rounded-full text-white text-sm font-semibold mr-2">✅ Approve</a>
-                                <a href="/admin/order/{{ o[0] }}/rejected" class="bg-red-600 hover:bg-red-500 px-3 py-1 rounded-full text-white text-sm font-semibold">❌ Reject</a>
-                            {% else %}
-                                <span class="text-gray-400">-</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+  <!-- Modern Toast Flash Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="flashToastContainer" class="fixed top-24 right-4 sm:right-6 z-[130000] max-w-sm sm:max-w-md w-full space-y-3 pointer-events-none transition-all duration-300">
+    {% for category, message in messages %}
+    <div class="flash-toast-item pointer-events-auto group relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300 flex items-start gap-3.5 sm:gap-4
+      {% if category == 'error' %}
+        bg-gradient-to-br from-[#1a080b]/98 to-[#0d0305]/98 border-rose-500/35 text-rose-100 shadow-rose-950/50 ring-1 ring-rose-500/20
+      {% elif category == 'success' %}
+        bg-gradient-to-br from-[#062012]/98 to-[#030e06]/98 border-emerald-500/35 text-emerald-100 shadow-emerald-950/50 ring-1 ring-emerald-500/20
+      {% else %}
+        bg-gradient-to-br from-[#071b2d]/98 to-[#030e17]/98 border-sky-500/35 text-sky-100 shadow-sky-950/50 ring-1 ring-sky-500/20
+      {% endif %}">
+      
+      <!-- Top-left ambient flare -->
+      <div class="pointer-events-none absolute -top-12 -left-12 w-32 h-32 rounded-full {% if category == 'error' %}bg-rose-500/15{% elif category == 'success' %}bg-emerald-500/15{% else %}bg-sky-500/15{% endif %} blur-2xl"></div>
+
+      <!-- Icon Badge -->
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 relative z-10
+        {% if category == 'error' %}
+          bg-gradient-to-br from-rose-500/25 to-rose-700/10 border border-rose-400/40 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.3)]
+        {% elif category == 'success' %}
+          bg-gradient-to-br from-emerald-500/25 to-emerald-700/10 border border-emerald-400/40 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.3)]
+        {% else %}
+          bg-gradient-to-br from-sky-500/25 to-sky-700/10 border border-sky-400/40 text-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.3)]
+        {% endif %}">
+        {% if category == 'error' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% elif category == 'success' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        {% endif %}
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pr-1 relative z-10">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %} opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %}"></span>
+            </span>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider {% if category == 'error' %}text-rose-300{% elif category == 'success' %}text-emerald-300{% else %}text-sky-300{% endif %}">
+              {% if category == 'error' %}Notice{% elif category == 'success' %}Success{% else %}Notification{% endif %}
+            </h4>
+          </div>
+          <span class="text-[10px] text-gray-400 font-medium tracking-normal">Just now</span>
         </div>
+        <p class="text-xs sm:text-[13px] font-medium leading-relaxed text-gray-100">
+          {{ message }}
+        </p>
+      </div>
 
-        <div class="mt-6 text-center">
-            <a href="/add_product" class="text-green-400 hover:text-green-300 font-semibold">⬅ Back to Add Product</a>
-        </div>
+      <!-- Close Action -->
+      <button onclick="dismissAdminToast(this)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 -mr-1 -mt-1 group/close relative z-10" aria-label="Dismiss">
+        <svg class="w-3.5 h-3.5 transition-transform group-hover/close:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Auto dismiss progress line -->
+      <div class="absolute bottom-0 inset-x-0 h-1 bg-black/30 overflow-hidden">
+        <div class="toast-progress h-full {% if category == 'error' %}bg-gradient-to-r from-rose-500 to-amber-500{% elif category == 'success' %}bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500{% else %}bg-gradient-to-r from-sky-400 to-indigo-400{% endif %}"></div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- ══ ADMIN HERO HEADER ══ -->
+  <section class="admin-hero pt-32 pb-10 px-4 sm:px-6 border-b border-emerald-500/15">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Top meta row -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-3 bg-emerald-500/10 border border-emerald-500/25">
+            
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Operations Control Center</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight" style="font-family: 'Outfit', sans-serif; letter-spacing: -0.03em;">
+            Admin <span class="text-emerald-400 drop-shadow-[0_0_25px_rgba(52,211,153,0.35)]">Operations Console</span>
+          </h1>
+          <p class="text-sm text-gray-400 mt-1 max-w-xl">
+            Monitor incoming seed order requests, manage grain weights and quantities, and oversee marketplace inventory.
+          </p>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="{{ url_for('add_product') }}"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs text-white shadow-lg shadow-emerald-600/30 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 transition-all hover:scale-105 active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+            <span>Add Seed Product</span>
+          </a>
+          <a href="{{ url_for('products') }}" target="_blank"
+             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs text-emerald-300 bg-white/5 hover:bg-white/10 border border-emerald-500/20 hover:border-emerald-500/40 transition-all">
+            <span>View Live Marketplace</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- ══ EXECUTIVE KPI STATS ══ -->
+      {% set pending_count = namespace(value=0) %}
+      {% set approved_count = namespace(value=0) %}
+      {% set total_revenue = namespace(value=0) %}
+      {% set total_weight = namespace(value=0) %}
+
+      {% for o in orders %}
+        {% if o['status'] == 'pending' %}
+          {% set pending_count.value = pending_count.value + 1 %}
+        {% elif o['status'] == 'approved' %}
+          {% set approved_count.value = approved_count.value + 1 %}
+        {% endif %}
+        {% set price = o['total_price'] if (o['total_price'] and o['total_price'] > 0) else ((o['unit_price'] or 0) * (o['quantity'] or 1)) %}
+        {% set total_revenue.value = total_revenue.value + price %}
+        {% set weight = o['weight_grams'] or 500 %}
+        {% set total_weight.value = total_weight.value + weight %}
+      {% endfor %}
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8">
+        
+        <!-- Total Orders -->
+        <div class="kpi-card">
+          <div class="flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">
+            <span>Total Orders</span>
+            <span class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white">
+            {{ orders|length }}
+          </div>
+          <p class="text-[11px] text-gray-400 mt-1">Platform customer orders</p>
+        </div>
+
+        <!-- Pending Verification -->
+        <div class="kpi-card">
+          <div class="flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">
+            <span>Pending Review</span>
+            <span class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-amber-300 flex items-baseline gap-2">
+            <span>{{ pending_count.value }}</span>
+            {% if pending_count.value > 0 %}
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 uppercase tracking-wider">Action</span>
+            {% endif %}
+          </div>
+          <p class="text-[11px] text-gray-400 mt-1">Awaiting dispatch approval</p>
+        </div>
+
+        <!-- Gross Volume Value -->
+        <div class="kpi-card">
+          <div class="flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">
+            <span>Gross Order Value</span>
+            <span class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+              ₹
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400">
+            ₹{{ total_revenue.value }}
+          </div>
+          <p class="text-[11px] text-gray-400 mt-1">Total order volume processed</p>
+        </div>
+
+        <!-- Total Seed Weight -->
+        <div class="kpi-card">
+          <div class="flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">
+            <span>Seeds Dispatched</span>
+            <span class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white">
+            {% if total_weight.value >= 1000 %}
+              {{ (total_weight.value / 1000)|round(2) }} <span class="text-base text-gray-400 font-normal">kg</span>
+            {% else %}
+              {{ total_weight.value }} <span class="text-base text-gray-400 font-normal">g</span>
+            {% endif %}
+          </div>
+          <p class="text-[11px] text-gray-400 mt-1">{{ total_weight.value }}g net weight</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ MAIN DASHBOARD BODY ══ -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-10">
+
+    <!-- View Switcher Tabs -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
+      <div class="flex items-center gap-2 p-1 rounded-full bg-black/40 border border-emerald-500/20 max-w-fit">
+        <button type="button" onclick="switchAdminTab('orders')" id="tab-btn-orders" class="nav-tab-btn active">
+          Orders Console ({{ orders|length }})
+        </button>
+        <button type="button" onclick="switchAdminTab('inventory')" id="tab-btn-inventory" class="nav-tab-btn">
+          Seed Inventory ({{ products|length }})
+        </button>
+      </div>
+
+      <!-- Quick status indicator -->
+      <div class="text-xs text-gray-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Connected to SQLite database</span>
+      </div>
+    </div>
+
+    <!-- ══════════════ TAB 1: ORDERS CONSOLE ══════════════ -->
+    <div id="admin-view-orders" class="space-y-6">
+
+      <!-- Orders Toolbar & Search -->
+      <div class="glass-card p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search bar -->
+        <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-black/40 border border-white/10 flex-1 max-w-md focus-within:border-emerald-500/60 transition-colors">
+          <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            type="text"
+            id="orderSearchInput"
+            oninput="filterOrderRows()"
+            placeholder="Search by Order ID, customer email, seed name..."
+            class="bg-transparent text-xs text-white placeholder-gray-500 outline-none w-full"
+          >
+        </div>
+
+        <!-- Status Filter Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="setOrderStatusFilter('all')" data-status="all" class="filter-pill active">
+            All ({{ orders|length }})
+          </button>
+          <button type="button" onclick="setOrderStatusFilter('pending')" data-status="pending" class="filter-pill">
+            Pending ({{ pending_count.value }})
+          </button>
+          <button type="button" onclick="setOrderStatusFilter('approved')" data-status="approved" class="filter-pill">
+            Approved ({{ approved_count.value }})
+          </button>
+          <button type="button" onclick="setOrderStatusFilter('rejected')" data-status="rejected" class="filter-pill">
+            Rejected
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders Data Table Container -->
+      <div class="glass-card overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-emerald-500/15 bg-black/40 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th class="py-4 px-5">Order ID</th>
+                <th class="py-4 px-5">Customer Buyer</th>
+                <th class="py-4 px-5">Seed Product</th>
+                <th class="py-4 px-5">Specific Weight &amp; Quantity</th>
+                <th class="py-4 px-5">Total Price</th>
+                <th class="py-4 px-5">Fulfillment Status</th>
+                <th class="py-4 px-5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody" class="divide-y divide-white/5 font-medium">
+              {% for o in orders %}
+              <tr class="order-row hover:bg-white/[0.03] transition-colors"
+                  data-order-id="{{ o['id'] }}"
+                  data-customer="{{ (o['email'] ~ ' ' ~ (o['user_name'] or ''))|lower }}"
+                  data-product="{{ o['name']|lower }}"
+                  data-status="{{ o['status']|lower }}">
+                
+                <!-- Order ID -->
+                <td class="py-4 px-5 font-mono font-bold text-emerald-400 whitespace-nowrap">
+                  #{{ o['id'] }}
+                </td>
+
+                <!-- Customer Buyer -->
+                <td class="py-4 px-5">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-extrabold text-xs flex items-center justify-center shrink-0">
+                      {{ (o['user_name'] or o['email'] or 'U')[:1]|upper }}
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-bold text-white text-xs truncate max-w-[180px]">{{ o['email'] }}</div>
+                      {% if o['user_name'] %}
+                      <div class="text-[11px] text-gray-400 truncate max-w-[180px]">{{ o['user_name'] }}</div>
+                      {% endif %}
+                      {% if o['phone'] %}
+                      <div class="text-[10px] text-emerald-400 font-mono mt-0.5">Ph: {{ o['phone'] }}</div>
+                      {% endif %}
+                      {% if o['address'] %}
+                      <div class="text-[10px] text-gray-400 mt-1 max-w-[200px] leading-tight" title="{{ o['address'] }}">
+                        {{ o['address'] }}
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Seed Product with Thumbnail -->
+                <td class="py-4 px-5">
+                  <div class="flex items-center gap-3">
+                    <img
+                      src="/static/uploads/{{ o['product_image'] or 'potato.png' }}"
+                      onerror="this.onerror=null; this.src='/static/images/potato.png';"
+                      alt="{{ o['name'] }}"
+                      class="w-10 h-10 rounded-xl object-cover border border-emerald-500/30 shrink-0 bg-black/50"
+                    >
+                    <div>
+                      <span class="font-extrabold text-white text-xs block leading-snug">{{ o['name'] }}</span>
+                      <span class="text-[10px] text-gray-400">Verified Organic Batch</span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Specific Weight & Quantity -->
+                <td class="py-4 px-5 whitespace-nowrap">
+                  {% if o['variant_name'] %}
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 mb-1">
+                    {{ o['variant_name'] }}
+                  </span>
+                  {% endif %}
+                  <div class="font-extrabold text-emerald-300 text-xs">
+                    {% if o['weight_grams'] and o['weight_grams'] >= 1000 %}
+                      {{ (o['weight_grams'] / 1000)|round(2) }} kg ({{ o['weight_grams'] }}g)
+                    {% else %}
+                      {{ o['weight_grams'] or 500 }}g
+                    {% endif %}
+                  </div>
+                  <div class="text-[11px] text-gray-400">
+                    {{ o['quantity'] or 1 }} pack{% if (o['quantity'] or 1) > 1 %}s{% endif %}
+                  </div>
+                </td>
+
+                <!-- Total Price -->
+                <td class="py-4 px-5 whitespace-nowrap">
+                  <span class="text-base font-black text-emerald-400">
+                    ₹{{ o['total_price'] if (o['total_price'] and o['total_price'] > 0) else ((o['unit_price'] or 0) * (o['quantity'] or 1)) }}
+                  </span>
+                </td>
+
+                <!-- Status Pill -->
+                <td class="py-4 px-5 whitespace-nowrap">
+                  {% if o['status'] == 'pending' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                      Pending
+                    </span>
+                  {% elif o['status'] == 'approved' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                      <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                      Approved
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                      Rejected
+                    </span>
+                  {% endif %}
+                </td>
+
+                <!-- Actions -->
+                <td class="py-4 px-5 text-right whitespace-nowrap">
+                  {% if o['status'] == 'pending' %}
+                    <div class="inline-flex items-center gap-2">
+                      <a href="{{ url_for('update_order', order_id=o['id'], status='approved') }}"
+                         class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all hover:scale-105 active:scale-95 inline-block">
+                        Approve
+                      </a>
+                      <a href="{{ url_for('update_order', order_id=o['id'], status='rejected') }}"
+                         class="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-bold transition-all inline-block">
+                        Reject
+                      </a>
+                    </div>
+                  {% elif o['status'] == 'approved' %}
+                    <div class="inline-flex items-center gap-2">
+                      <span class="text-xs text-emerald-400 font-bold px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">Ready to Ship</span>
+                      <a href="{{ url_for('update_order', order_id=o['id'], status='rejected') }}"
+                         title="Revoke order approval"
+                         class="text-[11px] text-gray-500 hover:text-rose-400 transition-colors">Revoke</a>
+                    </div>
+                  {% else %}
+                    <div class="inline-flex items-center gap-2">
+                      <span class="text-xs text-rose-400/80 font-semibold italic">Rejected</span>
+                      <a href="{{ url_for('update_order', order_id=o['id'], status='approved') }}"
+                         title="Re-open & approve"
+                         class="text-[11px] text-gray-500 hover:text-emerald-400 transition-colors">Re-open</a>
+                    </div>
+                  {% endif %}
+                </td>
+
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="7" class="py-16 text-center text-gray-400">
+                  <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-white mb-1">No customer orders recorded</p>
+                  <p class="text-xs text-gray-500">Orders placed by farmers in the Seed Marketplace will appear here instantly.</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ TAB 2: INVENTORY CATALOG ══════════════ -->
+    <div id="admin-view-inventory" class="hidden space-y-6">
+
+      <div class="glass-card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-extrabold text-white">Seed Marketplace Catalog</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Manage live seed listings, configure gram weights, or prune outdated offerings.</p>
+        </div>
+        <a href="{{ url_for('add_product') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 text-white font-bold text-xs shadow-md transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+          <span>Add New Seed Batch</span>
+        </a>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {% for p in products %}
+        <div class="glass-card p-4 flex flex-col justify-between group">
+          <div>
+            <div class="h-36 rounded-2xl overflow-hidden mb-3 relative bg-black/60 border border-emerald-500/20">
+              <img
+                src="/static/uploads/{{ p['image'] }}"
+                onerror="this.onerror=null; this.src='/static/images/potato.png';"
+                alt="{{ p['name'] }}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              >
+              <span class="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-emerald-300 border border-emerald-500/30">
+                #{{ p['id'] }}
+              </span>
+              <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500 text-emerald-950">
+                ₹{{ p['price'] }}
+              </span>
+            </div>
+
+            <h3 class="text-sm font-extrabold text-white truncate" title="{{ p['name'] }}">{{ p['name'] }}</h3>
+            <p class="text-xs text-emerald-300/90 font-semibold mt-0.5">
+              Standard: {{ p['weight_grams'] or 500 }}g pack
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-2">
+            <span class="text-[11px] text-gray-500 font-mono">ID: {{ p['id'] }}</span>
+            <form action="{{ url_for('delete_product', product_id=p['id']) }}" method="POST"
+                  onsubmit="return confirm('Remove {{ p['name']|escape }} from the seed marketplace?');">
+              <button type="submit"
+                      class="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-500/30 text-[11px] font-bold transition-all cursor-pointer">
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-span-full py-16 text-center text-gray-400">
+          <p class="text-sm font-bold text-white mb-2">No products in marketplace</p>
+          <a href="{{ url_for('add_product') }}" class="text-xs text-emerald-400 font-bold hover:underline">Add your first seed product &rarr;</a>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-8 px-4 text-center mt-auto border-t border-emerald-500/10">
+    <p class="text-xs text-emerald-400 font-bold tracking-wide">EcoHarvest Admin Operations Center</p>
+    <p class="text-[11px] text-gray-500 mt-1">Farm-to-Farm Marketplace Management Console &bull; Confidential Admin Access</p>
+  </footer>
+
+  <script>
+    // Tab switching logic
+    function switchAdminTab(tabName) {
+      const ordersView = document.getElementById('admin-view-orders');
+      const inventoryView = document.getElementById('admin-view-inventory');
+      const ordersBtn = document.getElementById('tab-btn-orders');
+      const inventoryBtn = document.getElementById('tab-btn-inventory');
+
+      if (tabName === 'orders') {
+        ordersView.classList.remove('hidden');
+        inventoryView.classList.add('hidden');
+        ordersBtn.classList.add('active');
+        inventoryBtn.classList.remove('active');
+      } else {
+        ordersView.classList.add('hidden');
+        inventoryView.classList.remove('hidden');
+        ordersBtn.classList.remove('active');
+        inventoryBtn.classList.add('active');
+      }
+    }
+
+    // Live search & status filter
+    let currentStatusFilter = 'all';
+
+    function setOrderStatusFilter(status) {
+      currentStatusFilter = status;
+
+      // Update pill styles
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        if (btn.getAttribute('data-status') === status) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      filterOrderRows();
+    }
+
+    function filterOrderRows() {
+      const query = (document.getElementById('orderSearchInput').value || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('.order-row');
+
+      rows.forEach(row => {
+        const orderId = (row.getAttribute('data-order-id') || '').toLowerCase();
+        const customer = (row.getAttribute('data-customer') || '').toLowerCase();
+        const product = (row.getAttribute('data-product') || '').toLowerCase();
+        const status = (row.getAttribute('data-status') || '').toLowerCase();
+
+        const matchesQuery = !query || orderId.includes(query) || customer.includes(query) || product.includes(query);
+        const matchesStatus = (currentStatusFilter === 'all') || (status === currentStatusFilter);
+
+        if (matchesQuery && matchesStatus) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+    function dismissAdminToast(btn) {
+      const item = btn.closest('.flash-toast-item');
+      if (item) {
+        item.classList.add('dismissing');
+        item.style.transform = 'translateX(40px)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 280);
+      }
+    }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.flash-toast-item').forEach(item => {
+        setTimeout(() => {
+          if (item && item.parentElement) {
+            item.classList.add('dismissing');
+            item.style.transform = 'translateX(40px)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 280);
+          }
+        }, 4200);
+      });
+    });
+  </script>
 
 </body>
 </html>

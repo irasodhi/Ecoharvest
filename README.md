@@ -1,59 +1,57 @@
-# EcoHarvest – Green Grid for Sustainable Farming
+# EcoHarvest – Sustainable Agriculture & AI Agronomy Platform
 
-## Problem Statement
-Farmers and home gardeners often lack proper guidance, access to organic resources, and reliable information for sustainable farming practices. Excessive use of chemical fertilizers and pesticides harms soil health, water resources, and the environment. There is a need for a digital platform that connects people, knowledge, and organic resources to promote environment-friendly farming.
+## Overview
+EcoHarvest is a modern green platform designed to promote sustainable agriculture, organic farming, and ecological crop stewardship. It pairs advanced computer vision and artificial intelligence with an organic farm-to-farm seed marketplace and a cryptographically verified farmer mentorship network.
 
-## Proposed Solution
-EcoHarvest is a web-based green platform designed to promote organic and sustainable farming. It provides an AI-powered chatbot for plantation guidance, crop-specific cultivation steps, and organic farming practices. The platform also connects farmers and gardeners with verified organic seed sellers, creating a digital green ecosystem.
+## Key Capabilities
 
-## Objectives
-- Promote organic and sustainable farming practices  
-- Reduce dependency on chemical fertilizers and seeds  
-- Provide easy farming guidance using AI chatbot  
-- Connect farmers, gardeners, and organic seed sellers  
-- Support environmental protection and food sustainability  
+### 1. Vision & Botanical AI Engine
+- **Custom Trained YOLOv8 Architecture**: Identifies 100 agricultural crop, flower, fruit, and leaf classes with bounding boxes and confidence scores.
+- **Strict Agricultural Domain Guardrails**: Non-plant objects (such as wallets, electronics, and accessories) are recognized and rejected from classification.
+- **Conversational Botanical Chatbot**: Natural language interaction for planting instructions, seasonal care, watering schedules, and live Wikipedia integration.
 
-## Key Features
-- **AI-based crop and plantation chatbot** – Real-time guidance for crops and plantations.  
-- **Crop and plant search** – Step-by-step cultivation instructions.  
-- **Organic seed seller–farmer connection** – Connect with verified organic seed suppliers.  
-- **Home gardening and terrace farming support** – Guidance for small-scale sustainable farming.  
-- **Climate-aware crop recommendations** – Crop suggestions based on climate and environment.  
-- **Seed Marketplace** – Users can browse products added by the admin.  
+### 2. Verified Farmer Network & Blockchain Anti-Fraud
+- **Cryptographic Document Verification**: Mentors upload authentic state land records (Khasra, Khatauni, 7/12 extract, or Kisan Credit Passbook) sealed on-chain with SHA-256 hashes (`0x...`).
+- **Duplicate Prevention**: Rejects duplicate Land Record IDs to prevent falsified farmer identities.
+- **Multi-State Coverage**: Mentors categorized across 9 major agricultural states (Haryana, Punjab, Rajasthan, Maharashtra, Uttar Pradesh, Madhya Pradesh, Gujarat, Karnataka, Himachal Pradesh).
 
-## How It Works
+### 3. Farm-to-Farm Seed Marketplace
+- Direct access to verified organic, non-GMO heirloom seeds.
+- Package variants (500g, 1kg, 2kg, 5kg) with live rate recalculation.
+- Address persistence and instant checkout autofill across sessions.
+- Modern centered toast notifications with auto-dismiss timers.
 
-### User Workflow
-1. Users can register and log in to EcoHarvest.  
-2. Users can browse products in the **Seed Marketplace**.  
-3. When a user buys a product, the request status initially shows:  
+### 4. User Profile & Order Management
+- Order history tracking with live status indicators (`Approved / Dispatched`, `Pending Review`, `Cancelled`).
+- Profile photo upload and biography editing.
+- Saved shipping address management.
+- Account security and cryptographic password updates.
 
+## Technology Stack
+- **Backend**: Python 3.11, Flask, Gunicorn
+- **Computer Vision**: Ultralytics YOLOv8, OpenCV Headless, Pillow
+- **Frontend**: Tailwind CSS, HTML5, Vanilla JavaScript, Jinja2
+- **Database**: SQLite3 with auto-migrations
+- **Design System**: Dark Emerald Palette, Outfit & DM Sans typography
 
-### Admin Workflow
-1. Admin can log in using:  
-- **Username:** `admin`  
-- **Password:** `admin123`  
-2. Admin can view all pending user requests for product purchases.  
-3. Admin can either **Approve** or **Reject** requests.  
-4. Once approved:  
-- User sees **Request Approved**  
-- User sees that the **Product will be Delivered**  
-5. Admin can also **add new products** to the Seed Marketplace.  
-6. Users can see newly added products immediately after admin adds them.  
+## Quickstart & Local Setup
 
-### Example
-| User Action | Status Shown |
-|-------------|--------------|
-| Buys a product | Waiting for Admin Approval |
-| Admin approves | Request Approved → Product Delivered |
-| Admin rejects | Request Rejected |
+```bash
+# Clone the repository
+git clone https://github.com/irasodhi/11_NovaCoders.git
+cd 11_NovaCoders
 
-## Conclusion
-EcoHarvest aims to build a scalable green digital ecosystem that empowers farmers and individuals to adopt organic farming. By combining technology with environmental responsibility, the project promotes a healthier environment, sustainable agriculture, and easy access to organic resources.
+# Install dependencies
+pip install -r requirements.txt
 
+# Start the application server
+python app.py
+```
 
+Visit `http://127.0.0.1:5000` in your web browser.
 
-
-
-
-
+## Deployment
+Configured for cloud deployment on platforms like Render, Railway, and Heroku via `Procfile`:
+```
+web: gunicorn app:app
+```

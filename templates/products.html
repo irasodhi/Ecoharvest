@@ -1,112 +1,1364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoHarvest | Products</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seed Marketplace | EcoHarvest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)), 
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #fff;
-        }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #030d06;
+      color: #fff;
+      min-height: 100vh;
+    }
+    h1, h2, h3, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
 
-        .glass-card {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(74, 222, 128, 0.4);
-        }
-    </style>
+    /* Navbar glass */
+    .glass-nav {
+      background: rgba(3, 13, 6, 0.90);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(52, 211, 153, 0.15);
+    }
+
+    /* Animated hero background */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 100% 80% at 50% -20%, rgba(16,185,129,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 90% 90%, rgba(52,211,153,0.08) 0%, transparent 60%),
+        #030d06;
+    }
+
+
+
+    /* Stats bar */
+    .stats-bar {
+      background: rgba(5, 20, 10, 0.75);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(52,211,153,0.10);
+      border-bottom: 1px solid rgba(52,211,153,0.12);
+    }
+
+    /* Search wrap */
+    .search-wrap {
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(52,211,153,0.18);
+      border-radius: 999px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .search-wrap:focus-within {
+      border-color: #34d399;
+      box-shadow: 0 0 0 4px rgba(52,211,153,0.12), 0 0 24px rgba(52,211,153,0.10);
+    }
+    .search-wrap input {
+      background: transparent;
+      outline: none;
+      color: #fff;
+      width: 100%;
+    }
+    .search-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* Product card */
+    .product-card {
+      background: rgba(8, 24, 14, 0.70);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(52,211,153,0.13);
+      border-radius: 1.75rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.32s cubic-bezier(.22,.68,0,1.2),
+                  box-shadow 0.32s ease,
+                  border-color 0.25s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(52,211,153,0.45);
+      box-shadow:
+        0 20px 48px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(52,211,153,0.15),
+        0 0 32px rgba(52,211,153,0.10);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      background: #020904;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .product-card:hover .card-img-wrap img {
+      transform: scale(1.07);
+    }
+    .img-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,24,14,0.95) 0%, rgba(8,24,14,0.2) 60%, transparent 100%);
+    }
+
+    .organic-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(5,20,10,0.85);
+      border: 1px solid rgba(52,211,153,0.35);
+      backdrop-filter: blur(10px);
+      color: #34d399;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 3px 10px; border-radius: 999px;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .germ-bar {
+      height: 4px; border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .germ-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #059669, #34d399);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030d06; }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.3); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52,211,153,0.55); }
+    @keyframes toastSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-28px) scale(0.96);
+      }
+      70% {
+        transform: translateY(4px) scale(1.01);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    @keyframes toastSlideOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-28px) scale(0.96);
+      }
+    }
+    @keyframes toastProgress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    .flash-toast-item {
+      animation: toastSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .flash-toast-item.dismissing {
+      animation: toastSlideOut 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+    .toast-progress {
+      animation: toastProgress 4.2s linear forwards;
+    }
+  </style>
 </head>
-<body class="min-h-screen px-4 py-8">
+<body class="flex flex-col min-h-screen">
 
-    <!-- NAVBAR -->
-    <!-- ===== NAVBAR ===== -->
-    <nav class="glass-nav fixed w-full z-50 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+  {% include 'navbar.html' %}
 
-            <!-- LOGO -->
-            <a href="{{ url_for('home') }}" class="nav-logo text-2xl font-bold text-green-400 flex items-center gap-2">
-                <span class="p-2 bg-green-600 rounded-lg text-white">🌿</span>
-                EcoHarvest
-            </a>
+  <!-- Modern Toast Flash Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="flashToastContainer" class="fixed top-24 left-1/2 -translate-x-1/2 z-[130000] max-w-md sm:max-w-lg w-[calc(100%-2rem)] space-y-3 pointer-events-none transition-all duration-300 flex flex-col items-center">
+    {% for category, message in messages %}
+    <div class="flash-toast-item pointer-events-auto group relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300 flex items-start gap-3.5 sm:gap-4
+      {% if category == 'error' %}
+        bg-gradient-to-br from-[#1a080b]/98 to-[#0d0305]/98 border-rose-500/35 text-rose-100 shadow-rose-950/50 ring-1 ring-rose-500/20
+      {% elif category == 'success' %}
+        bg-gradient-to-br from-[#062012]/98 to-[#030e06]/98 border-emerald-500/35 text-emerald-100 shadow-emerald-950/50 ring-1 ring-emerald-500/20
+      {% else %}
+        bg-gradient-to-br from-[#071b2d]/98 to-[#030e17]/98 border-sky-500/35 text-sky-100 shadow-sky-950/50 ring-1 ring-sky-500/20
+      {% endif %}">
+      
+      <!-- Top-left ambient flare -->
+      <div class="pointer-events-none absolute -top-12 -left-12 w-32 h-32 rounded-full {% if category == 'error' %}bg-rose-500/15{% elif category == 'success' %}bg-emerald-500/15{% else %}bg-sky-500/15{% endif %} blur-2xl"></div>
 
-            <!-- NAV LINKS -->
-            <div class="hidden md:flex gap-8 font-semibold text-gray-200 uppercase text-[10px] tracking-widest items-center">
-
-                <a href="{{ url_for('ai_chat') }}#ai-chatbot" class="nav-item hover:text-green-400">AI Chatbot</a>
-                <a href="{{ url_for('crop') }}#crop-guidance" class="nav-item hover:text-green-400">Crop Guidance</a>
-                <a href="{{ url_for('products') }}" class="nav-item hover:text-green-400">Seed Marketplace</a>
-                <a href="{{ url_for('farmers') }}#farmers" class="nav-item hover:text-green-400">Farmer Details</a>
-                <a href="{{ url_for('about') }}#about" class="nav-item hover:text-green-400">About Us</a>
-
-                <!-- AUTH LOGIC -->
-                {% if session.get('user_id') %}
-                    <span class="text-green-400 lowercase">{{ session.get('user') }}</span>
-                    <a href="{{ url_for('logout') }}" class="nav-item hover:text-red-400">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-item hover:text-green-400">Login</a>
-                    <a href="{{ url_for('register') }}" class="nav-item hover:text-green-400">Register</a>
-                {% endif %}
-
-            </div>
-        </div>
-    </nav>
-
-    <!-- PAGE HEADER -->
-    <div class="max-w-6xl mx-auto mt-28 mb-8 flex justify-between items-center">
-        <h1 class="text-4xl font-bold text-green-400">🌱 EcoHarvest Marketplace</h1>
-    </div>
-
-    <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="max-w-6xl mx-auto mb-6">
-                {% for category, message in messages %}
-                    <li class="text-sm text-center {% if category == 'error' %}text-red-400{% else %}text-green-400{% endif %}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
+      <!-- Icon Badge -->
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 relative z-10
+        {% if category == 'error' %}
+          bg-gradient-to-br from-rose-500/25 to-rose-700/10 border border-rose-400/40 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.3)]
+        {% elif category == 'success' %}
+          bg-gradient-to-br from-emerald-500/25 to-emerald-700/10 border border-emerald-400/40 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.3)]
+        {% else %}
+          bg-gradient-to-br from-sky-500/25 to-sky-700/10 border border-sky-400/40 text-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.3)]
+        {% endif %}">
+        {% if category == 'error' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% elif category == 'success' %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         {% endif %}
-    {% endwith %}
+      </div>
 
-    <!-- PRODUCTS GRID -->
-    <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {% for product in products %}
-        <div class="glass-card p-6 rounded-2xl flex flex-col items-center shadow-lg">
-
-            <img src="{{ url_for('static', filename='uploads/' ~ product[3]) }}" 
-                 alt="{{ product[1] }}" class="w-40 h-40 object-cover rounded-xl mb-4">
-
-            <h2 class="text-xl font-semibold mb-2">{{ product[1] }}</h2>
-            <p class="text-green-300 font-bold mb-4">₹{{ product[2] }}</p>
-
-         {% if not session.get('user_id') %}
-    <p class="text-gray-300">Login to buy</p>
-{% elif product[0] not in pending_orders %}
-    <form action="/order/{{ product[0] }}" method="post">
-        <button type="submit"
-            class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-full transition-all">
-            Buy
-        </button>
-    </form>
-{% else %}
-    <p class="text-yellow-300 font-semibold">⏳ Pending</p>
-{% endif %}
-
-
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pr-1 relative z-10">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %} opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 {% if category == 'error' %}bg-rose-400{% elif category == 'success' %}bg-emerald-400{% else %}bg-sky-400{% endif %}"></span>
+            </span>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider {% if category == 'error' %}text-rose-300{% elif category == 'success' %}text-emerald-300{% else %}text-sky-300{% endif %}">
+              {% if category == 'error' %}Notice{% elif category == 'success' %}Order Confirmed{% else %}Notification{% endif %}
+            </h4>
+          </div>
+          <span class="text-[10px] text-gray-400 font-medium tracking-normal">Just now</span>
         </div>
-        {% endfor %}
+        <p class="text-xs sm:text-[13px] font-medium leading-relaxed text-gray-100">
+          {{ message }}
+        </p>
+        {% if category == 'success' %}
+        <div class="mt-2.5 pt-2 border-t border-emerald-500/15 flex items-center justify-between text-[11px]">
+          <span class="text-emerald-400/90 font-medium flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            Dispatch Scheduled
+          </span>
+          <span class="text-gray-400 text-[10px] font-mono">EcoHarvest Express</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Close Action -->
+      <button onclick="dismissFlashToast(this)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 -mr-1 -mt-1 group/close relative z-10" aria-label="Dismiss">
+        <svg class="w-3.5 h-3.5 transition-transform group-hover/close:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Auto dismiss progress line -->
+      <div class="absolute bottom-0 inset-x-0 h-1 bg-black/30 overflow-hidden">
+        <div class="toast-progress h-full {% if category == 'error' %}bg-gradient-to-r from-rose-500 to-amber-500{% elif category == 'success' %}bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500{% else %}bg-gradient-to-r from-sky-400 to-indigo-400{% endif %}"></div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- ══ HERO ══ -->
+  <section class="hero-bg relative overflow-hidden pt-32 pb-16 px-4">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div style="position:absolute;top:-100px;left:-80px;width:480px;height:480px;background:radial-gradient(circle,rgba(16,185,129,0.14) 0%,transparent 70%);border-radius:50%;"></div>
+      <div style="position:absolute;bottom:-120px;right:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(52,211,153,0.08) 0%,transparent 70%);border-radius:50%;"></div>
+    </div>
+
+    <div class="relative max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-7"
+           style="background:rgba(16,185,129,0.10);border:1px solid rgba(52,211,153,0.28);">
+        
+        <span class="text-xs font-bold tracking-widest uppercase text-emerald-300">Farm-to-Farm Direct Marketplace</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-5" style="letter-spacing:-0.035em; font-family: 'Outfit', sans-serif;">
+        Organic Seed <span class="text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.35)]">Marketplace</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">
+        Order verified heirloom seeds by custom weight and grams. Direct farm pricing with certified germination rates.
+      </p>
+
+      <div class="max-w-lg mx-auto search-wrap flex items-center gap-3 px-5 py-3.5">
+        <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          oninput="filterProducts()"
+          placeholder="Search seeds by name, crop type..."
+          class="text-sm flex-1"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ STATS BAR ══ -->
+  <div class="stats-bar">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-center gap-8 sm:gap-16">
+      <div class="flex items-center gap-2.5 text-sm font-semibold text-emerald-300">
+        <svg class="w-4 h-4" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.84"/><path d="M17 8c-2 2-5 4-9 5"/><path d="M21 3c-1 2-3 6-9 9"/><path d="M21 3L3 21"/></svg>
+        100% Organic
+      </div>
+      <div class="hidden sm:block w-px h-5" style="background:rgba(52,211,153,0.2);"></div>
+      <div class="flex items-center gap-2.5 text-sm font-semibold text-emerald-300">
+        <svg class="w-4 h-4" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Non-GMO Certified
+      </div>
+      <div class="hidden sm:block w-px h-5" style="background:rgba(52,211,153,0.2);"></div>
+      <div class="flex items-center gap-2.5 text-sm font-semibold text-emerald-300">
+        <svg class="w-4 h-4" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Sold by Grams &amp; Weight
+      </div>
+      <div class="hidden sm:block w-px h-5" style="background:rgba(52,211,153,0.2);"></div>
+      <div class="flex items-center gap-2.5 text-sm font-semibold text-emerald-300">
+        <svg class="w-4 h-4" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Quality Assured
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-12">
+
+    <!-- Top bar controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-1 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-green-600"></div>
+        <div>
+          <h2 class="text-xl font-extrabold text-white">All Seed Listings</h2>
+          <p class="text-xs text-gray-400">Select packet quantity to scale grams and price</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Cart toggle button -->
+        <button type="button" onclick="toggleCartDrawer(true)"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 font-bold text-xs transition-all cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.84-7.25H5.106m2.394 7.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+          <span>Cart</span>
+          <span class="cart-count-text px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950 font-black text-[11px]">0</span>
+        </button>
+
+        {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('add_product') }}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs text-white shadow-lg shadow-emerald-600/30 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+          Add Product
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
+
+      {% for product in products %}
+      <div class="product-card product-item"
+           id="product-card-{{ product['id'] }}"
+           data-id="{{ product['id'] }}"
+           data-name="{{ product['name']|e }}"
+           data-base-price="{{ product['price'] }}"
+           data-base-weight="{{ product['weight_grams'] or 500 }}"
+           data-image="{{ product['image'] }}">
+
+        <!-- Image -->
+        <div class="card-img-wrap">
+          <img
+            src="{{ url_for('static', filename='uploads/' ~ product['image']) }}"
+            alt="{{ product['name'] }}"
+            onerror="this.onerror=null; this.src='/static/images/potato.png';"
+            loading="lazy"
+          >
+          <div class="img-scrim"></div>
+          <span class="organic-badge">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Organic
+          </span>
+        </div>
+
+        <!-- Body -->
+        <div class="flex flex-col flex-1 p-5">
+          <!-- Name -->
+          <h2 class="text-base font-extrabold text-white leading-snug mb-1 line-clamp-1" title="{{ product['name'] }}">
+            {{ product['name'] }}
+          </h2>
+
+          <!-- Weight info & Base Price Tag -->
+          <div class="flex items-center justify-between text-xs mb-3">
+            <span class="font-extrabold text-emerald-400">
+              ₹{{ product['price'] }} <span class="text-gray-400 font-normal text-[11px]">/ {{ product['weight_grams'] or 500 }}g standard</span>
+            </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300">
+              {{ product['weight_grams'] or 500 }}g base
+            </span>
+          </div>
+
+          <!-- Germination -->
+          <div class="mb-3">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Germination Rate</span>
+              <span class="text-[10px] font-bold text-emerald-400">&ge;92%</span>
+            </div>
+            <div class="germ-bar"><div class="germ-fill" style="width:92%;"></div></div>
+          </div>
+
+          <!-- Specific Pack Type / Size Selector -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-emerald-300/80 mb-1.5">
+              <span>Specific Pack Size:</span>
+              <span id="pack-label-{{ product['id'] }}" class="text-white font-extrabold">Standard Pack</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5" id="pack-group-{{ product['id'] }}">
+              <button type="button" onclick="selectCardPack({{ product['id'] }}, 100, '100g Trial Pack')"
+                      data-pack="100" class="pack-opt-btn text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-white/10 bg-white/5 hover:border-emerald-500/40 text-gray-300 transition-all text-center cursor-pointer">
+                100g
+              </button>
+              <button type="button" onclick="selectCardPack({{ product['id'] }}, 250, '250g Garden Pack')"
+                      data-pack="250" class="pack-opt-btn text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-white/10 bg-white/5 hover:border-emerald-500/40 text-gray-300 transition-all text-center cursor-pointer">
+                250g
+              </button>
+              <button type="button" onclick="selectCardPack({{ product['id'] }}, 500, '500g Standard Pack')"
+                      data-pack="500" class="pack-opt-btn active-pack text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-emerald-400 bg-emerald-500 text-emerald-950 shadow-md shadow-emerald-500/20 transition-all text-center cursor-pointer">
+                500g
+              </button>
+              <button type="button" onclick="selectCardPack({{ product['id'] }}, 1000, '1 kg Bulk Pack')"
+                      data-pack="1000" class="pack-opt-btn text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-white/10 bg-white/5 hover:border-emerald-500/40 text-gray-300 transition-all text-center cursor-pointer">
+                1 kg
+              </button>
+            </div>
+          </div>
+
+          <!-- Weight & Quantity Stepper -->
+          <div class="bg-black/30 border border-emerald-500/20 rounded-2xl p-2.5 my-1">
+            <div class="flex items-center justify-between text-[11px] font-bold mb-1.5">
+              <span class="text-gray-400">Total Net Weight:</span>
+              <span id="weight-lbl-{{ product['id'] }}" class="text-emerald-300 font-extrabold">
+                {{ product['weight_grams'] or 500 }}g
+              </span>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
+                <button type="button" aria-label="Decrease quantity"
+                        onclick="updateCardQty({{ product['id'] }}, -1)"
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500 hover:text-white text-gray-200 font-black text-sm flex items-center justify-center transition-all cursor-pointer">
+                  -
+                </button>
+                <span id="qty-lbl-{{ product['id'] }}" class="w-7 text-center text-xs font-black text-white">1</span>
+                <button type="button" aria-label="Increase quantity"
+                        onclick="updateCardQty({{ product['id'] }}, 1)"
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500 hover:text-white text-gray-200 font-black text-sm flex items-center justify-center transition-all cursor-pointer">
+                  +
+                </button>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] uppercase tracking-wider font-bold text-gray-400 block" id="unit-rate-{{ product['id'] }}">
+                  ₹{{ product['price'] }} / pack
+                </span>
+                <span id="price-lbl-{{ product['id'] }}" class="text-base font-black text-white leading-none">
+                  ₹{{ product['price'] }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-1"></div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-3 border-t border-white/10 mt-3">
+            <!-- Add to Cart -->
+            <button type="button"
+                    onclick="addToCart({{ product['id'] }})"
+                    class="w-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 hover:text-white py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.84-7.25H5.106m2.394 7.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+              <span>Add to Cart</span>
+            </button>
+
+            <!-- Buy Now -->
+            {% if not session.get('user_id') %}
+            <a href="{{ url_for('login') }}"
+               class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white py-2.5 px-2 rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center shadow-md active:scale-95">
+              Buy Now
+            </a>
+            {% else %}
+            <form action="{{ url_for('buy_product', product_id=product['id']) }}" method="POST" class="w-full" id="buy-form-{{ product['id'] }}">
+              <input type="hidden" name="quantity" id="buy-qty-{{ product['id'] }}" value="1">
+              <input type="hidden" name="pack_grams" id="buy-pack-{{ product['id'] }}" value="{{ product['weight_grams'] or 500 }}">
+              <input type="hidden" name="variant_name" id="buy-variant-{{ product['id'] }}" value="Standard Pack">
+              <input type="hidden" name="weight_grams" id="buy-weight-{{ product['id'] }}" value="{{ product['weight_grams'] or 500 }}">
+              <input type="hidden" name="total_price" id="buy-price-{{ product['id'] }}" value="{{ product['price'] }}">
+              <input type="hidden" name="address" id="buy-addr-{{ product['id'] }}" value="">
+              <input type="hidden" name="phone" id="buy-phone-{{ product['id'] }}" value="">
+              <input type="hidden" name="street" id="buy-street-{{ product['id'] }}" value="">
+              <input type="hidden" name="city" id="buy-city-{{ product['id'] }}" value="">
+              <input type="hidden" name="pincode" id="buy-pincode-{{ product['id'] }}" value="">
+              <button type="button" onclick="openOrderAddressModal('buynow', {{ product['id'] }})"
+                      class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white py-2.5 px-2 rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-600/30 active:scale-95 cursor-pointer">
+                Buy Now
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+      {% else %}
+      <div class="col-span-full flex flex-col items-center justify-center py-28 text-center">
+        <div class="w-20 h-20 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-6">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 8C8 10 5.9 16.17 3.82 19.84"/>
+            <path d="M17 8c-2 2-5 4-9 5"/>
+            <path d="M21 3c-1 2-3 6-9 9"/>
+            <path d="M21 3L3 21"/>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-extrabold text-white mb-3">No Products Available Yet</h3>
+        <p class="text-sm text-gray-400 max-w-sm leading-relaxed mb-6">
+          Our verified farmers are packaging fresh organic seed batches. Check back soon!
+        </p>
+      </div>
+      {% endfor %}
+
+    </div>
+  </main>
+
+  <!-- ══════════ FLOATING CART BUTTON ══════════ -->
+  <button id="floatingCartBtn" onclick="toggleCartDrawer(true)"
+          class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white px-5 py-3.5 rounded-full font-bold shadow-2xl shadow-emerald-950/80 border border-emerald-400/30 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.84-7.25H5.106m2.394 7.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+    </svg>
+    <span class="text-xs font-extrabold uppercase tracking-wider">Seed Cart</span>
+    <span id="floatingCartBadge" class="bg-white text-emerald-900 text-xs font-black px-2 py-0.5 rounded-full">0</span>
+  </button>
+
+  <!-- ══════════ SLIDE-OVER SEED CART DRAWER ══════════ -->
+  <div id="cartOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer(false)"></div>
+
+  <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-[#06180d] border-l border-emerald-500/25 z-[100000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-emerald-500/20 flex items-center justify-between bg-black/30">
+      <div class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.84-7.25H5.106m2.394 7.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+        </span>
+        <div>
+          <h2 class="text-base font-extrabold text-white">Your Seed Cart</h2>
+          <p class="text-[11px] text-emerald-400 font-semibold"><span id="drawerItemCount">0</span> items selected</p>
+        </div>
+      </div>
+      <button type="button" onclick="toggleCartDrawer(false)" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center font-bold text-lg transition-all cursor-pointer">
+        &times;
+      </button>
+    </div>
+
+    <!-- Drawer Items List -->
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-3.5">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div id="cartFooter" class="p-5 border-t border-emerald-500/20 bg-black/40 space-y-3">
+      <div class="flex justify-between items-center text-xs text-gray-300">
+        <span>Total Net Weight:</span>
+        <span id="drawerTotalWeight" class="font-bold text-emerald-300">0g</span>
+      </div>
+      <div class="flex justify-between items-center text-sm font-extrabold text-white">
+        <span>Order Subtotal:</span>
+        <span id="drawerTotalPrice" class="text-xl text-emerald-400 font-black">₹0</span>
+      </div>
+
+      {% if session.get('user_id') %}
+      <button type="button" onclick="openOrderAddressModal('cart')"
+              id="checkoutBtn"
+              class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+        <span>Place Order Now</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </button>
+      {% else %}
+      <a href="{{ url_for('login') }}"
+         class="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 text-sm transition-all text-center block">
+        Login to Place Order
+      </a>
+      {% endif %}
+
+      <button type="button" onclick="clearCart()" class="w-full text-center text-[11px] text-gray-400 hover:text-rose-400 transition-colors py-1 cursor-pointer">
+        Clear Cart
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Footer -->
+  <footer class="py-8 px-4 text-center mt-auto border-t border-emerald-500/10">
+    <div class="flex items-center justify-center gap-2 mb-2">
+      <svg class="w-4 h-4" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.84"/><path d="M17 8c-2 2-5 4-9 5"/><path d="M21 3c-1 2-3 6-9 9"/><path d="M21 3L3 21"/></svg>
+      <p class="text-sm font-bold text-emerald-400 tracking-wide">EcoHarvest &mdash; Farm-to-Farm Marketplace</p>
+    </div>
+    <p class="text-xs text-gray-500">Connecting farmers directly &bull; 100% Organic &bull; Non-GMO Certified</p>
+  </footer>
+
+  <script>
+    // State for individual cards: productId -> { qty, packGrams, variantName, unitPrice, basePrice, baseWeight }
+    const cardState = {};
+
+    function formatWeight(grams) {
+      if (!grams || isNaN(grams)) return '0g';
+      if (grams >= 1000) {
+        const kg = (grams / 1000).toFixed(grams % 1000 === 0 ? 0 : 2);
+        return `${kg} kg (${grams}g)`;
+      }
+      return `${grams}g`;
+    }
+
+    function initProductCard(cardEl) {
+      const pid = parseInt(cardEl.dataset.id, 10);
+      const basePrice = parseInt(cardEl.dataset.basePrice, 10) || 100;
+      const baseWeight = parseInt(cardEl.dataset.baseWeight, 10) || 500;
+
+      // Select default pack: 500g, or the baseWeight if specified
+      let initialPack = 500;
+      let initialLabel = '500g Standard Pack';
+      if (baseWeight === 100) { initialPack = 100; initialLabel = '100g Trial Pack'; }
+      else if (baseWeight === 250) { initialPack = 250; initialLabel = '250g Garden Pack'; }
+      else if (baseWeight === 1000) { initialPack = 1000; initialLabel = '1 kg Bulk Pack'; }
+
+      const unitPrice = Math.max(1, Math.round((basePrice / baseWeight) * initialPack));
+
+      cardState[pid] = {
+        qty: 1,
+        packGrams: initialPack,
+        variantName: initialLabel,
+        unitPrice: unitPrice,
+        basePrice: basePrice,
+        baseWeight: baseWeight
+      };
+
+      // Set initial button active state
+      const group = document.getElementById(`pack-group-${pid}`);
+      if (group) {
+        const btns = group.querySelectorAll('.pack-opt-btn');
+        btns.forEach(btn => {
+          const btnPack = parseInt(btn.dataset.pack, 10);
+          if (btnPack === initialPack) {
+            btn.className = 'pack-opt-btn active-pack text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-emerald-400 bg-emerald-500 text-emerald-950 shadow-md shadow-emerald-500/20 transition-all text-center cursor-pointer';
+          } else {
+            btn.className = 'pack-opt-btn text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-white/10 bg-white/5 hover:border-emerald-500/40 text-gray-300 transition-all text-center cursor-pointer';
+          }
+        });
+      }
+
+      updateCardDisplay(pid);
+    }
+
+    function selectCardPack(productId, packGrams, variantName) {
+      const card = document.getElementById(`product-card-${productId}`);
+      if (!card) return;
+
+      if (!cardState[productId]) {
+        initProductCard(card);
+      }
+
+      const st = cardState[productId];
+      st.packGrams = packGrams;
+      st.variantName = variantName;
+      st.unitPrice = Math.max(1, Math.round((st.basePrice / st.baseWeight) * packGrams));
+
+      const group = document.getElementById(`pack-group-${productId}`);
+      if (group) {
+        const btns = group.querySelectorAll('.pack-opt-btn');
+        btns.forEach(btn => {
+          const btnPack = parseInt(btn.dataset.pack, 10);
+          if (btnPack === packGrams) {
+            btn.className = 'pack-opt-btn active-pack text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-emerald-400 bg-emerald-500 text-emerald-950 shadow-md shadow-emerald-500/20 transition-all text-center cursor-pointer';
+          } else {
+            btn.className = 'pack-opt-btn text-[11px] font-bold py-1.5 px-0.5 rounded-lg border border-white/10 bg-white/5 hover:border-emerald-500/40 text-gray-300 transition-all text-center cursor-pointer';
+          }
+        });
+      }
+
+      updateCardDisplay(productId);
+    }
+
+    function updateCardQty(productId, delta) {
+      const card = document.getElementById(`product-card-${productId}`);
+      if (!card) return;
+      if (!cardState[productId]) {
+        initProductCard(card);
+      }
+
+      const st = cardState[productId];
+      st.qty = Math.max(1, st.qty + delta);
+      updateCardDisplay(productId);
+    }
+
+    function updateCardDisplay(productId) {
+      const st = cardState[productId];
+      if (!st) return;
+
+      const totalWeight = st.packGrams * st.qty;
+      const totalPrice = st.unitPrice * st.qty;
+
+      const packLbl = document.getElementById(`pack-label-${productId}`);
+      const qtyLbl = document.getElementById(`qty-lbl-${productId}`);
+      const weightLbl = document.getElementById(`weight-lbl-${productId}`);
+      const priceLbl = document.getElementById(`price-lbl-${productId}`);
+      const unitRate = document.getElementById(`unit-rate-${productId}`);
+
+      if (packLbl) packLbl.textContent = st.variantName;
+      if (qtyLbl) qtyLbl.textContent = st.qty;
+      if (weightLbl) weightLbl.textContent = formatWeight(totalWeight);
+      if (priceLbl) priceLbl.innerHTML = `₹${totalPrice}`;
+      if (unitRate) unitRate.innerHTML = `₹${st.unitPrice} / pack`;
+
+      // Update hidden buy-now form fields
+      const buyQty = document.getElementById(`buy-qty-${productId}`);
+      const buyPack = document.getElementById(`buy-pack-${productId}`);
+      const buyVariant = document.getElementById(`buy-variant-${productId}`);
+      const buyWeight = document.getElementById(`buy-weight-${productId}`);
+      const buyPrice = document.getElementById(`buy-price-${productId}`);
+
+      if (buyQty) buyQty.value = st.qty;
+      if (buyPack) buyPack.value = st.packGrams;
+      if (buyVariant) buyVariant.value = st.variantName;
+      if (buyWeight) buyWeight.value = totalWeight;
+      if (buyPrice) buyPrice.value = totalPrice;
+    }
+
+    // Shopping Cart logic (persisted in localStorage)
+    let cart = [];
+    try {
+      const saved = localStorage.getItem('ecoharvest_seed_cart');
+      if (saved) cart = JSON.parse(saved);
+      // Migrate legacy cart entries to composite keys
+      cart.forEach(item => {
+        if (!item.cart_item_id) {
+          const packG = item.pack_grams || item.base_weight || 500;
+          item.cart_item_id = `${item.product_id}_${packG}`;
+          item.pack_grams = packG;
+          item.variant_name = item.variant_name || `${packG}g Pack`;
+        }
+      });
+    } catch (e) {
+      cart = [];
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem('ecoharvest_seed_cart', JSON.stringify(cart));
+      } catch (e) {}
+      renderCart();
+    }
+
+    function addToCart(productId) {
+      const card = document.getElementById(`product-card-${productId}`);
+      if (!card) return;
+      if (!cardState[productId]) {
+        initProductCard(card);
+      }
+
+      const st = cardState[productId];
+      const name = card.dataset.name || 'Organic Seeds';
+      const image = card.dataset.image || '';
+      const cartItemId = `${productId}_${st.packGrams}`;
+
+      // Look up existing entry with the EXACT SAME specific pack type
+      const existing = cart.find(item => item.cart_item_id === cartItemId);
+
+      if (existing) {
+        existing.quantity += st.qty;
+        existing.total_weight = existing.pack_grams * existing.quantity;
+        existing.total_price = existing.unit_price * existing.quantity;
+      } else {
+        cart.push({
+          cart_item_id: cartItemId,
+          product_id: productId,
+          name: name,
+          variant_name: st.variantName,
+          pack_grams: st.packGrams,
+          unit_price: st.unitPrice,
+          quantity: st.qty,
+          total_weight: st.packGrams * st.qty,
+          total_price: st.unitPrice * st.qty,
+          image: image
+        });
+      }
+
+      const addedQty = st.qty;
+      const addedVariant = st.variantName;
+
+      // Reset card quantity stepper back to 1
+      st.qty = 1;
+      updateCardDisplay(productId);
+
+      saveCart();
+      showToast(`Added ${addedQty} &times; ${addedVariant} of ${name} to cart!`);
+      toggleCartDrawer(true);
+    }
+
+    function updateCartItemQty(cartItemId, delta) {
+      const item = cart.find(i => i.cart_item_id === cartItemId);
+      if (!item) return;
+
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        cart = cart.filter(i => i.cart_item_id !== cartItemId);
+      } else {
+        item.total_weight = (item.pack_grams || 500) * item.quantity;
+        item.total_price = item.unit_price * item.quantity;
+      }
+      saveCart();
+    }
+
+    function removeCartItem(cartItemId) {
+      cart = cart.filter(i => i.cart_item_id !== cartItemId);
+      saveCart();
+    }
+
+    function clearCart() {
+      cart = [];
+      saveCart();
+    }
+
+    function toggleCartDrawer(open) {
+      const drawer = document.getElementById('cartDrawer');
+      const overlay = document.getElementById('cartOverlay');
+      if (!drawer || !overlay) return;
+
+      if (open) {
+        drawer.classList.remove('translate-x-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100');
+      } else {
+        drawer.classList.add('translate-x-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100');
+      }
+    }
+
+    function renderCart() {
+      const countBadge = document.getElementById('floatingCartBadge');
+      const countHeader = document.querySelectorAll('.cart-count-text');
+      const drawerItemCount = document.getElementById('drawerItemCount');
+      const itemsList = document.getElementById('cartItemsList');
+      const drawerTotalWeight = document.getElementById('drawerTotalWeight');
+      const drawerTotalPrice = document.getElementById('drawerTotalPrice');
+
+      const totalItems = cart.reduce((acc, i) => acc + (i.quantity || 1), 0);
+      if (countBadge) countBadge.textContent = totalItems;
+      countHeader.forEach(el => el.textContent = totalItems);
+      if (drawerItemCount) drawerItemCount.textContent = totalItems;
+
+      if (!itemsList) return;
+
+      if (cart.length === 0) {
+        itemsList.innerHTML = `
+          <div class="py-16 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-4">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.84-7.25H5.106m2.394 7.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+            </div>
+            <p class="text-sm font-extrabold text-white mb-1">Your seed cart is empty</p>
+            <p class="text-xs text-gray-400">Choose organic seeds, pick your specific pack size, and click Add to Cart.</p>
+          </div>
+        `;
+        if (drawerTotalWeight) drawerTotalWeight.textContent = '0g';
+        if (drawerTotalPrice) drawerTotalPrice.innerHTML = '₹0';
+        return;
+      }
+
+      let totalWeight = 0;
+      let totalPrice = 0;
+      let html = '';
+
+      cart.forEach(item => {
+        const packG = item.pack_grams || item.base_weight || 500;
+        const itemWeight = item.total_weight || (packG * item.quantity);
+        const itemPrice = item.total_price || (item.unit_price * item.quantity);
+        totalWeight += itemWeight;
+        totalPrice += itemPrice;
+
+        const variantBadge = item.variant_name || `${packG}g Pack`;
+
+        html += `
+          <div class="bg-black/40 border border-emerald-500/20 rounded-2xl p-3.5 flex gap-3.5 items-center">
+            <img src="/static/uploads/${item.image}"
+                 onerror="this.onerror=null; this.src='/static/images/potato.png';"
+                 alt="${item.name}"
+                 class="w-16 h-16 rounded-xl object-cover border border-emerald-500/30 shrink-0">
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-start gap-1">
+                <h3 class="text-xs font-bold text-white truncate" title="${item.name}">${item.name}</h3>
+                <button type="button" onclick="removeCartItem('${item.cart_item_id}')" class="text-gray-400 hover:text-rose-400 text-base font-bold leading-none cursor-pointer p-0.5">&times;</button>
+              </div>
+
+              <div class="flex items-center gap-2 mt-1">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                  ${variantBadge}
+                </span>
+                <span class="text-[11px] text-gray-400">
+                  ₹${item.unit_price} / pack
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between mt-2.5">
+                <div class="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-0.5">
+                  <button type="button" onclick="updateCartItemQty('${item.cart_item_id}', -1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold text-xs flex items-center justify-center hover:bg-emerald-600 transition-colors cursor-pointer">-</button>
+                  <span class="w-7 text-center text-xs font-bold text-white">${item.quantity}</span>
+                  <button type="button" onclick="updateCartItemQty('${item.cart_item_id}', 1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold text-xs flex items-center justify-center hover:bg-emerald-600 transition-colors cursor-pointer">+</button>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] text-emerald-300/80 font-bold block">${formatWeight(itemWeight)}</span>
+                  <span class="text-sm font-black text-white leading-none">₹${itemPrice}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      itemsList.innerHTML = html;
+      if (drawerTotalWeight) drawerTotalWeight.textContent = formatWeight(totalWeight);
+      if (drawerTotalPrice) drawerTotalPrice.innerHTML = `₹${totalPrice}`;
+    }
+
+    // Order Address Modal State
+    let activeOrderType = null; // 'buynow' or 'cart'
+    let activeBuyProductId = null;
+    const isUserLoggedIn = {% if session.get('user_id') %}true{% else %}false{% endif %};
+
+    const currentUserId = {{ session.get('user_id') or 'null' }};
+
+    function populateSavedAddress() {
+      // Check localStorage for address
+      if (currentUserId) {
+        const key = 'ecoharvest_address_' + currentUserId;
+        const savedRaw = localStorage.getItem(key);
+        if (savedRaw) {
+          try {
+            const s = JSON.parse(savedRaw);
+            const nameEl = document.getElementById('modalBuyerName');
+            const phoneEl = document.getElementById('modalBuyerPhone');
+            const streetEl = document.getElementById('modalBuyerStreet');
+            const cityEl = document.getElementById('modalBuyerCity');
+            const pinEl = document.getElementById('modalBuyerPincode');
+            if (nameEl && !nameEl.value && s.name) nameEl.value = s.name;
+            if (phoneEl && !phoneEl.value && s.phone) phoneEl.value = s.phone;
+            if (streetEl && !streetEl.value && s.street) streetEl.value = s.street;
+            if (cityEl && !cityEl.value && s.city) cityEl.value = s.city;
+            if (pinEl && !pinEl.value && s.pincode) pinEl.value = s.pincode;
+          } catch (e) {}
+        }
+      }
+
+      // Check if address is fully populated
+      const streetVal = (document.getElementById('modalBuyerStreet')?.value || '').trim();
+      const cityVal = (document.getElementById('modalBuyerCity')?.value || '').trim();
+      const pinVal = (document.getElementById('modalBuyerPincode')?.value || '').trim();
+      const notice = document.getElementById('autofillNotice');
+      if (notice) {
+        if (streetVal && cityVal && pinVal) {
+          notice.classList.remove('hidden');
+          notice.classList.add('flex');
+        } else {
+          notice.classList.add('hidden');
+          notice.classList.remove('flex');
+        }
+      }
+    }
+
+    function openOrderAddressModal(type, productId = null) {
+      if (!isUserLoggedIn) {
+        window.location.href = '/login';
+        return;
+      }
+
+      activeOrderType = type;
+      activeBuyProductId = productId;
+
+      // Autofill address from profile or localStorage
+      populateSavedAddress();
+
+      const summaryBox = document.getElementById('modalOrderSummary');
+      if (!summaryBox) return;
+
+      if (type === 'buynow') {
+        const card = document.getElementById(`product-card-${productId}`);
+        const st = cardState[productId];
+        if (!card || !st) return;
+
+        const name = card.dataset.name || 'Organic Seeds';
+        const totalWeight = st.packGrams * st.qty;
+        const totalPrice = st.unitPrice * st.qty;
+
+        summaryBox.innerHTML = `
+          <div class="flex items-center justify-between text-white font-bold">
+            <span class="truncate pr-2">${name}</span>
+            <span class="text-emerald-400 font-extrabold shrink-0">₹${totalPrice}</span>
+          </div>
+          <div class="text-[11px] text-gray-300 mt-1">
+            <span class="text-emerald-300 font-semibold">${st.variantName}</span> &bull; ${st.qty} pack${st.qty > 1 ? 's' : ''} (${formatWeight(totalWeight)})
+          </div>
+        `;
+      } else if (type === 'cart') {
+        if (cart.length === 0) {
+          showToast('Your cart is empty. Add seeds first.');
+          return;
+        }
+
+        const totalItems = cart.reduce((acc, i) => acc + (i.quantity || 1), 0);
+        let totalWeight = 0;
+        let totalPrice = 0;
+        cart.forEach(item => {
+          const packG = item.pack_grams || item.base_weight || 500;
+          totalWeight += item.total_weight || (packG * item.quantity);
+          totalPrice += item.total_price || (item.unit_price * item.quantity);
+        });
+
+        summaryBox.innerHTML = `
+          <div class="flex items-center justify-between text-white font-bold">
+            <span>Cart Order (${cart.length} item${cart.length > 1 ? 's' : ''}, ${totalItems} packs)</span>
+            <span class="text-emerald-400 font-extrabold shrink-0">₹${totalPrice}</span>
+          </div>
+          <div class="text-[11px] text-gray-300 mt-1">
+            Total Net Weight: <span class="text-emerald-300 font-semibold">${formatWeight(totalWeight)}</span>
+          </div>
+        `;
+      }
+
+      const modal = document.getElementById('orderAddressModal');
+      const box = document.getElementById('orderAddressModalBox');
+      if (modal && box) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+        box.classList.remove('scale-95');
+        box.classList.add('scale-100');
+      }
+    }
+
+    function closeOrderAddressModal() {
+      const modal = document.getElementById('orderAddressModal');
+      const box = document.getElementById('orderAddressModalBox');
+      if (modal && box) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+        box.classList.add('scale-95');
+        box.classList.remove('scale-100');
+      }
+      activeOrderType = null;
+      activeBuyProductId = null;
+    }
+
+    async function submitOrderWithAddress(event) {
+      event.preventDefault();
+
+      const name = (document.getElementById('modalBuyerName').value || '').trim();
+      const phone = (document.getElementById('modalBuyerPhone').value || '').trim();
+      const street = (document.getElementById('modalBuyerStreet').value || '').trim();
+      const city = (document.getElementById('modalBuyerCity').value || '').trim();
+      const pincode = (document.getElementById('modalBuyerPincode').value || '').trim();
+
+      if (!name || !phone || !street || !city || !pincode) {
+        alert('Please fill in all address and contact details.');
+        return;
+      }
+
+      const fullAddress = `${street}, ${city} - ${pincode} (Recipient: ${name})`;
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerText = 'Placing Order...';
+      }
+
+      // Save to localStorage for instant reuse
+      if (currentUserId) {
+        try {
+          localStorage.setItem('ecoharvest_address_' + currentUserId, JSON.stringify({
+            name: name,
+            phone: phone,
+            street: street,
+            city: city,
+            pincode: pincode
+          }));
+        } catch (e) {}
+      }
+
+      if (activeOrderType === 'buynow' && activeBuyProductId) {
+        const form = document.getElementById(`buy-form-${activeBuyProductId}`);
+        const addrInput = document.getElementById(`buy-addr-${activeBuyProductId}`);
+        const phoneInput = document.getElementById(`buy-phone-${activeBuyProductId}`);
+        const streetInput = document.getElementById(`buy-street-${activeBuyProductId}`);
+        const cityInput = document.getElementById(`buy-city-${activeBuyProductId}`);
+        const pinInput = document.getElementById(`buy-pincode-${activeBuyProductId}`);
+        if (form && addrInput && phoneInput) {
+          addrInput.value = fullAddress;
+          phoneInput.value = phone;
+          if (streetInput) streetInput.value = street;
+          if (cityInput) cityInput.value = city;
+          if (pinInput) pinInput.value = pincode;
+          form.submit();
+        }
+      } else if (activeOrderType === 'cart') {
+        await checkoutCart(fullAddress, phone, street, city, pincode);
+      }
+    }
+
+    async function checkoutCart(address = '', phone = '', street = '', city = '', pincode = '') {
+      if (cart.length === 0) return;
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerText = 'Processing Order...';
+      }
+
+      try {
+        const res = await fetch('/cart/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cart, address: address, phone: phone, street: street, city: city, pincode: pincode })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          clearCart();
+          toggleCartDrawer(false);
+          closeOrderAddressModal();
+          showToast(data.message || 'Order placed successfully! Delivery address confirmed.');
+          setTimeout(() => window.location.reload(), 1400);
+        } else {
+          if (data.error === 'auth_required') {
+            window.location.href = '/login';
+          } else {
+            alert(data.message || 'Checkout failed. Please try again.');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            if (confirmBtn) {
+              confirmBtn.disabled = false;
+              confirmBtn.innerText = 'Confirm & Place Order';
+            }
+            if (checkoutBtn) {
+              checkoutBtn.disabled = false;
+              checkoutBtn.innerText = 'Place Order Now';
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to place cart order. Please try again.');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = 'Confirm & Place Order';
+        }
+        if (checkoutBtn) {
+          checkoutBtn.disabled = false;
+          checkoutBtn.innerText = 'Place Order Now';
+        }
+      }
+    }
+
+        function dismissFlashToast(btn) {
+      const item = btn.closest('.flash-toast-item');
+      if (item) {
+        item.classList.add('dismissing');
+        item.style.transform = 'translateY(-28px)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 280);
+      }
+    }
+
+    function showToast(msg, category = 'success', title = '') {
+      let container = document.getElementById('flashToastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'flashToastContainer';
+        container.className = 'fixed top-24 left-1/2 -translate-x-1/2 z-[130000] max-w-md sm:max-w-lg w-[calc(100%-2rem)] space-y-3 pointer-events-none transition-all duration-300 flex flex-col items-center';
+        document.body.appendChild(container);
+      }
+
+      const isError = category === 'error';
+      const toastTitle = title || (isError ? 'Notice' : (category === 'cart' ? 'Cart Updated' : 'Success'));
+      
+      const toast = document.createElement('div');
+      toast.className = `flash-toast-item pointer-events-auto group relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300 flex items-start gap-3.5 sm:gap-4 ${
+        isError 
+          ? 'bg-gradient-to-br from-[#1a080b]/98 to-[#0d0305]/98 border-rose-500/35 text-rose-100 shadow-rose-950/50 ring-1 ring-rose-500/20'
+          : 'bg-gradient-to-br from-[#062012]/98 to-[#030e06]/98 border-emerald-500/35 text-emerald-100 shadow-emerald-950/50 ring-1 ring-emerald-500/20'
+      }`;
+
+      toast.innerHTML = `
+        <div class="pointer-events-none absolute -top-12 -left-12 w-32 h-32 rounded-full ${isError ? 'bg-rose-500/15' : 'bg-emerald-500/15'} blur-2xl"></div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 relative z-10 ${
+          isError 
+            ? 'bg-gradient-to-br from-rose-500/25 to-rose-700/10 border border-rose-400/40 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.3)]'
+            : 'bg-gradient-to-br from-emerald-500/25 to-emerald-700/10 border border-emerald-400/40 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.3)]'
+        }">
+          ${isError 
+            ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+            : '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+          }
+        </div>
+        <div class="flex-1 min-w-0 pr-1 relative z-10">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${isError ? 'bg-rose-400' : 'bg-emerald-400'} opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 ${isError ? 'bg-rose-400' : 'bg-emerald-400'}"></span>
+              </span>
+              <h4 class="text-[11px] font-bold uppercase tracking-wider ${isError ? 'text-rose-300' : 'text-emerald-300'}">${toastTitle}</h4>
+            </div>
+            <span class="text-[10px] text-gray-400 font-medium tracking-normal">Just now</span>
+          </div>
+          <p class="text-xs sm:text-[13px] font-medium leading-relaxed text-gray-100">${msg}</p>
+        </div>
+        <button onclick="dismissFlashToast(this)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 -mr-1 -mt-1 group/close relative z-10" aria-label="Dismiss">
+          <svg class="w-3.5 h-3.5 transition-transform group-hover/close:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="absolute bottom-0 inset-x-0 h-1 bg-black/30 overflow-hidden">
+          <div class="toast-progress h-full ${isError ? 'bg-gradient-to-r from-rose-500 to-amber-500' : 'bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500'}"></div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        if (toast && toast.parentElement) {
+          toast.classList.add('dismissing');
+          toast.style.transform = 'translateY(-28px)';
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 280);
+        }
+      }, 4200);
+    }
+
+    function filterProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const items = document.querySelectorAll('.product-item');
+      items.forEach(item => {
+        const name = (item.getAttribute('data-name') || '').toLowerCase();
+        item.style.display = name.includes(query) ? '' : 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.product-card').forEach(card => {
+        initProductCard(card);
+      });
+      renderCart();
+
+      // Auto dismiss initial server flash messages after 4.2 seconds
+      document.querySelectorAll('.flash-toast-item').forEach(item => {
+        setTimeout(() => {
+          if (item && item.parentElement) {
+            item.classList.add('dismissing');
+            item.style.transform = 'translateY(-28px)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 280);
+          }
+        }, 4200);
+      });
+    });
+  </script>
+
+  <!-- ══════════ DELIVERY ADDRESS MODAL ══════════ -->
+  <div id="orderAddressModal" class="fixed inset-0 z-[120000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-[#06180d] border border-emerald-500/30 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl transform scale-95 transition-transform duration-300 relative text-left" id="orderAddressModalBox">
+      
+      <!-- Close Button -->
+      <button type="button" onclick="closeOrderAddressModal()" class="absolute top-5 right-5 w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center font-bold text-lg cursor-pointer">
+        &times;
+      </button>
+
+      <!-- Header -->
+      <div class="mb-5">
+        <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 mb-2">
+          Delivery Information
+        </span>
+        <h3 class="text-xl font-extrabold text-white">Confirm Delivery Address</h3>
+        <p class="text-xs text-gray-400 mt-1">Please provide your destination shipping details to complete the seed order.</p>
+      </div>
+
+      <!-- Order Summary Banner -->
+      <div id="modalOrderSummary" class="bg-black/40 border border-emerald-500/20 rounded-2xl p-3.5 mb-5 text-xs">
+      </div>
+
+      <!-- Address Form -->
+      <form id="deliveryAddressForm" onsubmit="submitOrderWithAddress(event)" class="space-y-3.5">
+        
+        <!-- Autofill status badge -->
+        <div id="autofillNotice" class="hidden items-center justify-between text-[11px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 px-3.5 py-2 rounded-xl mb-3">
+          <span class="flex items-center gap-1.5 font-semibold">
+            <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Autofilled from your saved profile
+          </span>
+          <span class="text-gray-400 text-[10px]">Editable anytime</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-1">Full Name</label>
+            <input type="text" id="modalBuyerName" required
+                   value="{{ (user_info and user_info.get('name')) or session.get('user_name') or '' }}"
+                   placeholder="Recipient's Name"
+                   class="w-full bg-black/50 border border-white/15 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-1">Contact Phone</label>
+            <input type="tel" id="modalBuyerPhone" required
+                   value="{{ (user_info and user_info.get('phone')) or '' }}"
+                   pattern="[0-9]{10}"
+                   title="Please enter a 10-digit mobile number"
+                   placeholder="10-digit Mobile Number"
+                   class="w-full bg-black/50 border border-white/15 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none transition-colors">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-1">Street Address / House / Village</label>
+          <textarea id="modalBuyerStreet" rows="2" required
+                    placeholder="House/Plot no., Street name, Landmark, Village or Town"
+                    class="w-full bg-black/50 border border-white/15 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none transition-colors resize-none">{{ (user_info and user_info.get('street')) or '' }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-1">City / District</label>
+            <input type="text" id="modalBuyerCity" required
+                   value="{{ (user_info and user_info.get('city')) or '' }}"
+                   placeholder="City or District"
+                   class="w-full bg-black/50 border border-white/15 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-1">Postal PIN Code</label>
+            <input type="text" id="modalBuyerPincode" required
+                   value="{{ (user_info and user_info.get('pincode')) or '' }}"
+                   pattern="[0-9]{6}"
+                   title="Please enter a 6-digit postal pincode"
+                   placeholder="6-digit PIN code"
+                   class="w-full bg-black/50 border border-white/15 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none transition-colors">
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-3 border-t border-white/10 flex items-center justify-end gap-3 mt-4">
+          <button type="button" onclick="closeOrderAddressModal()"
+                  class="px-4 py-2.5 rounded-xl border border-white/15 text-gray-300 hover:text-white hover:bg-white/5 text-xs font-bold transition-all cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="modalConfirmBtn"
+                  class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+            Confirm &amp; Place Order
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 
 </body>
 </html>

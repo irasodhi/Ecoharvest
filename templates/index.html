@@ -1,185 +1,878 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoHarvest | Sustainable Farming</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Boda:wght@700&display=swap');
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            cursor: none;
-            background: linear-gradient(rgba(10, 40, 25, 0.45), rgba(10, 40, 25, 0.5)), 
-                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #ffffff;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>EcoHarvest | AI-Powered Sustainable Farming Platform</title>
+ <script src="https://cdn.tailwindcss.com"></script>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+ <style>
+ :root {
+ --green-glow: rgba(52, 211, 153, 0.15);
+ --green-strong: rgba(52, 211, 153, 0.5);
+ }
 
-        .glass-nav {
-            background: rgba(10, 40, 25, 0.6);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(34, 197, 94, 0.3);
-        }
+ * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .challenge-font { font-family: 'Boda', serif; letter-spacing: -0.02em; }
+ body {
+ font-family: 'DM Sans', sans-serif;
+ background: #030d06;
+ color: #fff;
+ overflow-x: hidden;
+ }
 
-        .cursor-stalker {
-            width: 35px; height: 35px; border: 2px solid #4ade80;
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
-        }
-        .cursor-dot {
-            width: 6px; height: 6px; background: #4ade80;
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
-        }
+ /* ---- GLASS NAV ---- */
+ .glass-nav {
+ background: rgba(3, 13, 6, 0.85);
+ backdrop-filter: blur(24px);
+ border-bottom: 1px solid rgba(52, 211, 153, 0.15);
+ }
 
-        .feature-card { 
-            background: rgba(255, 255, 255, 0.12); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            /* Ensure cards are ready for GSAP but hidden initially */
-            opacity: 0;
-            will-change: transform, opacity;
-        }
+ /* ---- HERO BG ---- */
+ .hero-bg {
+ position: relative;
+ min-height: 100vh;
+ background:
+ radial-gradient(ellipse 70% 60% at 50% -10%, rgba(16, 100, 50, 0.55) 0%, transparent 70%),
+ radial-gradient(ellipse 50% 40% at 80% 60%, rgba(5, 90, 40, 0.3) 0%, transparent 60%),
+ url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+ overflow: hidden;
+ }
 
-        .text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    </style>
+ .hero-bg::after {
+ content: '';
+ position: absolute;
+ inset: 0;
+ background: linear-gradient(to bottom, rgba(3,13,6,0.6) 0%, rgba(3,13,6,0.75) 70%, #030d06 100%);
+ }
+
+ .hero-content { position: relative; z-index: 10; }
+
+ /* ---- BADGE ---- */
+ .badge-pill {
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ padding: 6px 16px;
+ border-radius: 999px;
+ background: rgba(52,211,153,0.1);
+ border: 1px solid rgba(52,211,153,0.3);
+ color: #6ee7b7;
+ font-size: 11px;
+ font-weight: 700;
+ letter-spacing: 0.08em;
+ text-transform: uppercase;
+ }
+ /* ---- HERO TITLE ---- */
+ .hero-headline {
+ font-family: 'Outfit', sans-serif;
+ font-size: clamp(2.6rem, 7.5vw, 6.4rem);
+ font-weight: 900;
+ line-height: 1.04;
+ letter-spacing: -0.035em;
+ }
+ .gradient-word {
+ background: linear-gradient(135deg, #10b981 0%, #34d399 45%, #6ee7b7 100%);
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ filter: drop-shadow(0 0 35px rgba(52, 211, 153, 0.35));
+ }
+
+ /* ---- GLOW BUTTONS ---- */
+ .btn-primary {
+ background: linear-gradient(135deg, #059669, #10b981);
+ color: #fff;
+ padding: 14px 32px;
+ border-radius: 999px;
+ font-weight: 800;
+ font-size: 14px;
+ letter-spacing: 0.02em;
+ border: none;
+ cursor: pointer;
+ transition: all 0.25s ease;
+ box-shadow: 0 0 25px rgba(16,185,129,0.4), 0 4px 15px rgba(0,0,0,0.3);
+ text-decoration: none;
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ }
+ .btn-primary:hover {
+ transform: translateY(-3px) scale(1.03);
+ box-shadow: 0 0 40px rgba(16,185,129,0.6), 0 8px 25px rgba(0,0,0,0.3);
+ }
+ .btn-secondary {
+ background: rgba(255,255,255,0.07);
+ border: 1px solid rgba(255,255,255,0.18);
+ color: #e5e7eb;
+ padding: 13px 28px;
+ border-radius: 999px;
+ font-weight: 700;
+ font-size: 14px;
+ cursor: pointer;
+ transition: all 0.25s ease;
+ text-decoration: none;
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ backdrop-filter: blur(10px);
+ }
+ .btn-secondary:hover {
+ background: rgba(255,255,255,0.14);
+ border-color: rgba(52,211,153,0.5);
+ color: #fff;
+ transform: translateY(-2px);
+ }
+
+ /* ---- STATS ---- */
+ .stat-card {
+ text-align: center;
+ padding: 20px 24px;
+ border-radius: 20px;
+ background: rgba(255,255,255,0.04);
+ border: 1px solid rgba(255,255,255,0.08);
+ }
+ .stat-number {
+ font-family: 'Outfit', sans-serif;
+ font-size: 2rem;
+ font-weight: 900;
+ color: #34d399;
+ line-height: 1;
+ }
+
+ /* ---- FEATURE CARDS ---- */
+ .feat-card {
+ border-radius: 28px;
+ padding: 36px;
+ border: 1px solid rgba(255,255,255,0.08);
+ background: rgba(255,255,255,0.03);
+ backdrop-filter: blur(16px);
+ transition: all 0.35s cubic-bezier(.22,.68,0,1.2);
+ position: relative;
+ overflow: hidden;
+ text-decoration: none;
+ display: block;
+ }
+ .feat-card::before {
+ content: '';
+ position: absolute;
+ inset: 0;
+ border-radius: 28px;
+ background: radial-gradient(circle at 30% 30%, rgba(52,211,153,0.07), transparent 65%);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ }
+ .feat-card:hover { 
+ transform: translateY(-10px); 
+ border-color: rgba(52,211,153,0.4); 
+ box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(52,211,153,0.15);
+ background: rgba(255,255,255,0.055);
+ }
+ .feat-card:hover::before { opacity: 1; }
+
+ 
+ .feat-card:hover 
+
+ .feat-tag {
+ font-size: 10px;
+ font-weight: 800;
+ letter-spacing: 0.08em;
+ text-transform: uppercase;
+ padding: 4px 10px;
+ border-radius: 999px;
+ }
+
+ /* ---- SECTION DIVIDER ---- */
+ .section-label {
+ font-size: 10px;
+ font-weight: 800;
+ letter-spacing: 0.15em;
+ text-transform: uppercase;
+ color: #34d399;
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ }
+ .section-label::before {
+ content: '';
+ width: 24px; height: 2px;
+ background: #34d399;
+ border-radius: 2px;
+ }
+
+ /* ---- PROCESS STEPS ---- */
+ .step-card {
+ padding: 32px;
+ border-radius: 24px;
+ background: rgba(255,255,255,0.03);
+ border: 1px solid rgba(255,255,255,0.07);
+ transition: all 0.3s ease;
+ }
+ .step-card:hover {
+ background: rgba(52,211,153,0.05);
+ border-color: rgba(52,211,153,0.3);
+ transform: translateY(-4px);
+ }
+ .step-num {
+ font-family: 'Outfit', sans-serif;
+ font-size: 2.5rem;
+ font-weight: 900;
+ color: rgba(52,211,153,0.2);
+ line-height: 1;
+ margin-bottom: 16px;
+ }
+
+ /* ---- CROP SCROLL TICKER ---- */
+ .ticker-wrapper {
+ overflow: hidden;
+ border-top: 1px solid rgba(255,255,255,0.07);
+ border-bottom: 1px solid rgba(255,255,255,0.07);
+ background: rgba(0,0,0,0.3);
+ }
+ .ticker-track {
+ display: flex;
+ gap: 0;
+ animation: tickerScroll 30s linear infinite;
+ white-space: nowrap;
+ }
+ .ticker-track:hover { animation-play-state: paused; }
+ .ticker-item {
+ display: inline-flex;
+ align-items: center;
+ gap: 10px;
+ padding: 14px 32px;
+ font-size: 12px;
+ font-weight: 700;
+ letter-spacing: 0.08em;
+ text-transform: uppercase;
+ color: #6ee7b7;
+ border-right: 1px solid rgba(255,255,255,0.07);
+ flex-shrink: 0;
+ }
+ @keyframes tickerScroll {
+ 0% { transform: translateX(0); }
+ 100% { transform: translateX(-50%); }
+ }
+
+ /* ---- CTA SECTION ---- */
+ .cta-section {
+ background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(5,100,45,0.5), rgba(3,13,6,0.9));
+ border: 1px solid rgba(52,211,153,0.15);
+ border-radius: 40px;
+ position: relative;
+ overflow: hidden;
+ }
+ .cta-section::before {
+ content: '';
+ position: absolute;
+ width: 300px; height: 300px;
+ border-radius: 50%;
+ background: radial-gradient(circle, rgba(52,211,153,0.15), transparent);
+ top: -50px; left: -50px;
+ }
+ .cta-section::after {
+ content: '';
+ position: absolute;
+ width: 200px; height: 200px;
+ border-radius: 50%;
+ background: radial-gradient(circle, rgba(52,211,153,0.1), transparent);
+ bottom: -30px; right: -30px;
+ }
+
+ /* ---- TESTIMONIAL ---- */
+ .testi-card {
+ background: rgba(255,255,255,0.03);
+ border: 1px solid rgba(255,255,255,0.08);
+ border-radius: 24px;
+ padding: 28px;
+ transition: all 0.3s ease;
+ }
+ .testi-card:hover {
+ border-color: rgba(52,211,153,0.3);
+ background: rgba(52,211,153,0.04);
+ transform: translateY(-4px);
+ }
+ .stars { color: #fbbf24; font-size: 13px; letter-spacing: 2px; }
+
+ /* ---- FOOTER ---- */
+ .footer-bg {
+ background: #020a04;
+ border-top: 1px solid rgba(52,211,153,0.1);
+ }
+
+ /* ---- SCROLL FADE-IN ANIMATION ---- */
+ .fade-up {
+ opacity: 0;
+ transform: translateY(40px);
+ transition: opacity 0.7s ease, transform 0.7s ease;
+ }
+ .fade-up.visible {
+ opacity: 1;
+ transform: translateY(0);
+ }
+
+ /* Delay classes */
+ .delay-1 { transition-delay: 0.1s; }
+ .delay-2 { transition-delay: 0.2s; }
+ .delay-3 { transition-delay: 0.3s; }
+ .delay-4 { transition-delay: 0.4s; }
+
+ /* ---- FLOATING ORBS ---- */
+ .orb {
+ position: absolute;
+ border-radius: 50%;
+ filter: blur(80px);
+ pointer-events: none;
+ }
+ .orb-1 {
+ width: 500px; height: 500px;
+ background: radial-gradient(circle, rgba(16,185,129,0.18), transparent);
+ top: -100px; left: -100px;
+ animation: orbFloat1 12s ease-in-out infinite alternate;
+ }
+ .orb-2 {
+ width: 400px; height: 400px;
+ background: radial-gradient(circle, rgba(5,150,105,0.14), transparent);
+ bottom: 0; right: -50px;
+ animation: orbFloat2 14s ease-in-out infinite alternate;
+ }
+ @keyframes orbFloat1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px,30px) scale(1.1); } }
+ @keyframes orbFloat2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-40px,-30px) scale(1.08); } }
+
+ /* ---- MOCK DASHBOARD CARD ---- */
+ .dashboard-card {
+ background: rgba(255,255,255,0.03);
+ border: 1px solid rgba(52,211,153,0.2);
+ border-radius: 24px;
+ overflow: hidden;
+ box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(52,211,153,0.08);
+ position: relative;
+ }
+ .dashboard-card::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 0; right: 0;
+ height: 1px;
+ background: linear-gradient(90deg, transparent, rgba(52,211,153,0.4), transparent);
+ }
+ .dashboard-bar {
+ padding: 10px 16px;
+ background: rgba(0,0,0,0.3);
+ border-bottom: 1px solid rgba(255,255,255,0.05);
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ }
+ .dot-red { width:10px;height:10px;border-radius:50%;background:#ef4444;opacity:0.7; }
+ .dot-yellow{ width:10px;height:10px;border-radius:50%;background:#f59e0b;opacity:0.7; }
+ .dot-green { width:10px;height:10px;border-radius:50%;background:#34d399;opacity:0.7; }
+
+ /* ---- BRAND LOGO SHINE ---- */
+ @keyframes shimmer {
+ 0% { background-position: -200% center; }
+ 100% { background-position: 200% center; }
+ }
+ .shimmer-text {
+ background: linear-gradient(90deg, #34d399 0%, #6ee7b7 25%, #fff 50%, #6ee7b7 75%, #34d399 100%);
+ background-size: 200% auto;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ animation: shimmer 4s linear infinite;
+ }
+
+ /* ---- GLOW RING (hero center) ---- */
+ .glow-ring {
+ position: absolute;
+ width: 700px; height: 700px;
+ border-radius: 50%;
+ border: 1px solid rgba(52,211,153,0.07);
+ top: 50%; left: 50%;
+ transform: translate(-50%,-50%);
+ pointer-events: none;
+ }
+ .glow-ring:nth-child(2) { width: 900px; height: 900px; border-color: rgba(52,211,153,0.04); }
+ .glow-ring:nth-child(3) { width: 1100px; height: 1100px; border-color: rgba(52,211,153,0.025); }
+
+ /* ---- HERO ENTRY ANIMATION ---- */
+ @keyframes fadeSlideDown {
+ from { opacity: 0; transform: translateY(-24px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+ </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <div class="cursor-stalker"></div>
-    <div class="cursor-dot"></div>
+ <!-- NAVBAR -->
+ {% include 'navbar.html' %}
 
-    <nav class="glass-nav fixed w-full z-50 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+ <!-- ============================================================
+ HERO SECTION
+ ============================================================ -->
+ <section class="hero-bg flex items-center justify-center min-h-screen pt-20" style="position:relative;">
 
-            <a href="{{ url_for('home') }}" class="nav-logo text-2xl font-bold text-green-400 flex items-center gap-2">
-                <span class="p-2 bg-green-600 rounded-lg text-white">🌿</span>
-                EcoHarvest
+ <!-- Floating orbs -->
+ <div class="orb orb-1"></div>
+ <div class="orb orb-2"></div>
+ <!-- Concentric glow rings -->
+ <div class="glow-ring"></div>
+ <div class="glow-ring"></div>
+ <div class="glow-ring"></div>
+
+ <div class="hero-content max-w-6xl mx-auto px-6 py-20 text-center">
+
+ <div class="badge-pill mb-7 mx-auto w-fit" style="animation: fadeSlideDown 0.8s ease both;">
+ 
+ AI-Powered Platform Live — 2026
+ </div>
+
+ <h1 class="hero-headline mb-6" style="animation: fadeSlideDown 0.8s ease 0.15s both;">
+ Grow Smarter,<br>
+ Farm <span class="gradient-word shimmer-text">Smarter</span>
+ </h1>
+
+ <p class="text-gray-300 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 font-light" style="animation: fadeSlideDown 0.8s ease 0.3s both;">
+ India's most advanced AI farming platform — instant plant diagnosis,
+ Wikipedia botanical data, live weather, and organic seed commerce.
+ </p>
+
+ <div class="flex flex-wrap justify-center gap-4 mb-14" style="animation: fadeSlideDown 0.8s ease 0.45s both;">
+ <a href="{{ url_for('ai_chat') }}" class="btn-primary">
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+ Try AI Agronomist
+ </a>
+ <a href="{{ url_for('products') }}" class="btn-secondary">
+ Browse Marketplace
+ </a>
+ {% if session.get('user_id') is not none %}
+        <a href="{{ url_for('crop') }}" class="btn-secondary">
+          Crop Guidance →
+        </a>
+        {% else %}
+        <a href="{{ url_for('register') }}" class="btn-secondary">
+          Join Free →
+        </a>
+        {% endif %}
+ </div>
+
+ <!-- STATS ROW -->
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto" style="animation: fadeSlideDown 0.8s ease 0.6s both;">
+ <div class="stat-card">
+ <div class="stat-number">40+</div>
+ <div class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Crops Covered</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-number">100%</div>
+ <div class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Wikipedia Linked</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-number">15+</div>
+ <div class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Expert Farmers</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-number">Live</div>
+ <div class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Weather Data</div>
+ </div>
+ </div>
+
+ <!-- MOCK DASHBOARD PREVIEW CARD -->
+ <div class="mt-16 max-w-2xl mx-auto dashboard-card" style="animation: fadeSlideDown 0.9s ease 0.75s both;">
+ <div class="dashboard-bar">
+ <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+ <span style="font-size:11px; color:#4b5563; margin-left:10px; font-family:monospace;">plantbot.ai — Wikipedia + Weather Live</span>
+ </div>
+ <div style="padding:20px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+ <div style="background:rgba(52,211,153,0.07); border:1px solid rgba(52,211,153,0.2); border-radius:12px; padding:14px;">
+ <div style="font-size:10px; color:#34d399; font-weight:800; letter-spacing:0.1em; margin-bottom:6px;">PLANT IDENTIFIED</div>
+ <div style="font-size:14px; font-weight:800; color:#fff;">Tomato</div>
+ <div style="font-size:10px; color:#6b7280; margin-top:2px;">Solanum lycopersicum</div>
+ </div>
+ <div style="background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.2); border-radius:12px; padding:14px;">
+ <div style="font-size:10px; color:#38bdf8; font-weight:800; letter-spacing:0.1em; margin-bottom:6px;">LIVE WEATHER</div>
+ <div style="font-size:14px; font-weight:800; color:#fff;">24.3°C</div>
+ <div style="font-size:10px; color:#34d399; margin-top:2px; font-weight:600;">Ideal Range</div>
+ </div>
+ <div style="background:rgba(16,185,129,0.07); border:1px solid rgba(16,185,129,0.2); border-radius:12px; padding:14px;">
+ <div style="font-size:10px; color:#a7f3d0; font-weight:800; letter-spacing:0.1em; margin-bottom:6px;">WIKIPEDIA</div>
+ <div style="font-size:11px; font-weight:600; color:#e2e8f0; line-height:1.4;">Botanical record verified</div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Scroll arrow -->
+ <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-emerald-400 opacity-60 animate-bounce">
+ <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+ <path d="M19 9l-7 7-7-7"/>
+ </svg>
+ </div>
+ </section>
+
+ <!-- ============================================================
+ CROP TICKER
+ ============================================================ -->
+ <div class="ticker-wrapper py-0">
+ <div class="ticker-track">
+ <!-- Double the items so it loops seamlessly -->
+ <span class="ticker-item">Tomato</span>
+ <span class="ticker-item">Wheat</span>
+ <span class="ticker-item">Rice (Paddy)</span>
+ <span class="ticker-item">Potato</span>
+ <span class="ticker-item">Onion</span>
+ <span class="ticker-item">Chilli</span>
+ <span class="ticker-item">Cotton</span>
+ <span class="ticker-item">Maize</span>
+ <span class="ticker-item">Sugarcane</span>
+ <span class="ticker-item">Turmeric</span>
+ <span class="ticker-item">Neem</span>
+ <span class="ticker-item">Ginger</span>
+ <span class="ticker-item">Mango</span>
+ <span class="ticker-item">Basil</span>
+ <span class="ticker-item">Rose</span>
+ <span class="ticker-item">Aloe Vera</span>
+ <!-- Duplicate for seamless loop -->
+ <span class="ticker-item">Tomato</span>
+ <span class="ticker-item">Wheat</span>
+ <span class="ticker-item">Rice (Paddy)</span>
+ <span class="ticker-item">Potato</span>
+ <span class="ticker-item">Onion</span>
+ <span class="ticker-item">Chilli</span>
+ <span class="ticker-item">Cotton</span>
+ <span class="ticker-item">Maize</span>
+ <span class="ticker-item">Sugarcane</span>
+ <span class="ticker-item">Turmeric</span>
+ <span class="ticker-item">Neem</span>
+ <span class="ticker-item">Ginger</span>
+ <span class="ticker-item">Mango</span>
+ <span class="ticker-item">Basil</span>
+ <span class="ticker-item">Rose</span>
+ <span class="ticker-item">Aloe Vera</span>
+ </div>
+ </div>
+
+ <!-- ============================================================
+  PLATFORM FEATURES
+  ============================================================ -->
+  <section class="py-28 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-20 fade-up">
+        <div class="section-label justify-center mb-4">Platform Features</div>
+        <h2 class="text-3xl sm:text-5xl font-black tracking-tight mb-4">
+          Everything a Modern Farmer Needs
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto text-base">
+          One integrated platform combining AI, botanical science, weather data and seed commerce.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- AI Chatbot -->
+        <a href="{{ url_for('ai_chat') }}" class="feat-card fade-up delay-1">
+          <div class="flex items-center gap-3 mb-3">
+            <h3 class="text-xl font-black text-white">PlantBot AI</h3>
+            <span class="feat-tag" style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);">Wikipedia Live</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">
+            Type a crop name and get instant care guides, live temperature checks, soil requirements, and harvest timelines.
+          </p>
+          <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold group-hover:gap-3 transition-all">
+            Open PlantBot
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Crop Intelligence -->
+        <a href="{{ url_for('crop') }}" class="feat-card fade-up delay-2">
+          <div class="flex items-center gap-3 mb-3">
+            <h3 class="text-xl font-black text-white">Crop Guidance</h3>
+            <span class="feat-tag" style="background: rgba(52,211,153,0.1); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25);">Field Tested</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">
+            Deep-dive cultivation guides with growth timelines, season calendars, soil compatibility charts, and organic input schedules.
+          </p>
+          <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold transition-all">
+            Explore Guides
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Seed Marketplace -->
+        <a href="{{ url_for('products') }}" class="feat-card fade-up delay-3">
+          <div class="flex items-center gap-3 mb-3">
+            <h3 class="text-xl font-black text-white">Seed Marketplace</h3>
+            <span class="feat-tag" style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);">Organic Verified</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">
+            Browse high-germination heirloom seeds, organic biofertilizers, and cultivation inputs sourced directly from verified organic growers.
+          </p>
+          <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold transition-all">
+            Shop Now
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Expert Farmers -->
+        <a href="{{ url_for('farmers') }}" class="feat-card fade-up delay-4">
+          <div class="flex items-center gap-3 mb-3">
+            <h3 class="text-xl font-black text-white">Expert Network</h3>
+            <span class="feat-tag" style="background: rgba(251,146,60,0.1); color: #fed7aa; border: 1px solid rgba(251,146,60,0.25);">Book Sessions</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-5">
+            Connect with 15+ experienced organic farming specialists across Haryana, Punjab, and Rajasthan via video or physical farm visits.
+          </p>
+          <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold transition-all">
+            Find Mentors
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+  HOW IT WORKS
+ ============================================================ -->
+ <section class="py-24 px-6" style="background: rgba(0,0,0,0.3);">
+ <div class="max-w-6xl mx-auto">
+ <div class="text-center mb-16 fade-up">
+ <div class="section-label justify-center mb-4">How It Works</div>
+ <h2 class="text-3xl sm:text-4xl font-black tracking-tight">
+ Farming Intelligence in 3 Steps
+ </h2>
+ </div>
+
+ <div class="grid md:grid-cols-3 gap-6">
+ <div class="step-card fade-up delay-1">
+ <div class="step-num">01</div>
+ <h3 class="text-xl font-black text-white mb-2">Type Any Crop Name</h3>
+ <p class="text-gray-400 text-sm leading-relaxed">
+ Enter any crop or plant in the PlantBot AI — from common crops like Tomato and Wheat to exotic plants like Lotus or Lavender. Even Hindi names like Pyaz or Gehun work!
+ </p>
+ </div>
+ <div class="step-card fade-up delay-2">
+ <div class="step-num">02</div>
+ <h3 class="text-xl font-black text-white mb-2">Get Instant AI Diagnosis</h3>
+ <p class="text-gray-400 text-sm leading-relaxed">
+ Our AI fetches Wikipedia botanical data, checks live temperature, and generates a full care card — water schedule, soil type, sunlight needs, and harvest timeline.
+ </p>
+ </div>
+ <div class="step-card fade-up delay-3">
+ <div class="step-num">03</div>
+ <h3 class="text-xl font-black text-white mb-2">Grow with Confidence</h3>
+ <p class="text-gray-400 text-sm leading-relaxed">
+ Apply expert tips, order organic seeds from the marketplace, and book a mentor consultation — everything from one green platform.
+ </p>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- ============================================================
+ TESTIMONIALS
+ ============================================================ -->
+ <section class="py-24 px-6">
+ <div class="max-w-6xl mx-auto">
+ <div class="text-center mb-16 fade-up">
+ <div class="section-label justify-center mb-4">Community Voices</div>
+ <h2 class="text-3xl sm:text-4xl font-black tracking-tight">
+ Farmers Love EcoHarvest
+ </h2>
+ </div>
+
+ <div class="grid md:grid-cols-3 gap-6">
+ <div class="testi-card fade-up delay-1">
+ <div class="flex items-center gap-1 mb-3 text-emerald-400">
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+ <p class="text-gray-300 text-sm leading-relaxed mb-5 italic">
+ "PlantBot told me my tomato patch was too cold in December and suggested I use tunnel farming. Yield improved 40% that season!"
+ </p>
+ <div class="flex items-center gap-3">
+ <div class="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-sm">RS</div>
+ <div>
+ <div class="text-sm font-bold text-white">Ramesh Sharma</div>
+ <div class="text-xs text-gray-400">Wheat Farmer, Punjab</div>
+ </div>
+ </div>
+ </div>
+ <div class="testi-card fade-up delay-2">
+ <div class="flex items-center gap-1 mb-3 text-emerald-400">
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+ <p class="text-gray-300 text-sm leading-relaxed mb-5 italic">
+ "Bought certified organic onion seeds from the marketplace and they had over 95% germination. Very transparent platform."
+ </p>
+ <div class="flex items-center gap-3">
+ <div class="w-9 h-9 rounded-full bg-teal-700 flex items-center justify-center font-bold text-sm">PK</div>
+ <div>
+ <div class="text-sm font-bold text-white">Priya Kanwar</div>
+ <div class="text-xs text-gray-400">Home Gardener, Rajasthan</div>
+ </div>
+ </div>
+ </div>
+ <div class="testi-card fade-up delay-3">
+ <div class="flex items-center gap-1 mb-3 text-emerald-400">
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+ <p class="text-gray-300 text-sm leading-relaxed mb-5 italic">
+ "I booked a video session with Sukhbir Singh through the Expert Network — he gave me a complete soil rejuvenation plan in one hour!"
+ </p>
+ <div class="flex items-center gap-3">
+ <div class="w-9 h-9 rounded-full bg-green-700 flex items-center justify-center font-bold text-sm">AS</div>
+ <div>
+ <div class="text-sm font-bold text-white">Ajeet Singh</div>
+ <div class="text-xs text-gray-400">Organic Farmer, Haryana</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- ============================================================
+       CTA SECTION
+  ============================================================ -->
+  <section class="py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="cta-section px-8 sm:px-16 py-16 text-center fade-up">
+        <div class="relative z-10">
+          {% if session.get('user_id') is not none %}
+          <div class="badge-pill mb-5 mx-auto w-fit">
+            Active Member — {{ session.get('user_name') or session.get('user') }}
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-black tracking-tight mb-5">
+            Ready for Your Next<br>Harvest?
+          </h2>
+          <p class="text-gray-300 text-base max-w-lg mx-auto mb-8">
+            Diagnose crops instantly with PlantBot AI or purchase premium verified organic seeds in the marketplace.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="{{ url_for('ai_chat') }}" class="btn-primary text-base px-10 py-4">
+              Launch PlantBot AI →
             </a>
-
-            <div class="hidden md:flex gap-8 font-semibold text-gray-200 uppercase text-[10px] tracking-widest items-center">
-
-                <a href="{{ url_for('ai_chat') }}#ai-chatbot" class="nav-item hover:text-green-400">AI Chatbot</a>
-                <a href="{{ url_for('crop') }}#crop-guidance" class="nav-item hover:text-green-400">Crop Guidance</a>
-                <a href="{{ url_for('products') }}" class="nav-item hover:text-green-400">Seed Marketplace</a>
-                <a href="{{ url_for('farmers') }}#farmers" class="nav-item hover:text-green-400">Farmer Details</a>
-                <a href="{{ url_for('about') }}#team-section" class="nav-item text-green-400">About Us</a>
-
-             {% if session.get('user_id') %}
-    <span class="text-green-400 lowercase">{{ session.get('user') }}</span>
-    <a href="{{ url_for('logout') }}" class="nav-item hover:text-red-400">Logout</a>
-{% else %}
-    <a href="{{ url_for('login') }}" class="nav-item hover:text-green-400">Login</a>
-    <a href="{{ url_for('register') }}" class="nav-item hover:text-green-400">Register</a>
-{% endif %}
-
-
-            </div>
-
-            <!-- <a href="{{ url_for('register') }}" class="bg-green-600 text-white px-8 py-2 rounded-full font-bold shadow-lg text-sm hidden md:inline-block hover:bg-green-500">Get Started</a> -->
+            <a href="{{ url_for('products') }}" class="btn-secondary text-base px-10 py-4">
+              Explore Seed Marketplace
+            </a>
+          </div>
+          {% else %}
+          <div class="badge-pill mb-5 mx-auto w-fit">
+            Free to use — No credit card required
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-black tracking-tight mb-5">
+            Start Growing Smarter<br>Today
+          </h2>
+          <p class="text-gray-300 text-base max-w-lg mx-auto mb-8">
+            Join farmers using EcoHarvest's AI tools to reduce chemical dependence and grow healthier, higher-yield crops.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="{{ url_for('register') }}" class="btn-primary text-base px-10 py-4">
+              Create Free Account →
+            </a>
+            <a href="{{ url_for('ai_chat') }}" class="btn-secondary text-base px-10 py-4">
+              Try PlantBot AI
+            </a>
+          </div>
+          {% endif %}
         </div>
-    </nav>
+      </div>
+    </div>
+  </section>
 
-    <section id="home" class="pt-48 pb-20 px-6 text-center">
-        <div class="max-w-7xl mx-auto">
-            <h1 class="hero-title text-5xl md:text-8xl font-extrabold text-white mb-6 leading-tight text-shadow">
-                Green Grid for <br><span class="text-green-400 italic">Sustainable Farming</span>
-            </h1>
-            <p class="hero-subtitle text-lg text-gray-100 max-w-2xl mx-auto opacity-0 bg-black/40 p-6 rounded-3xl backdrop-blur-md border border-white/20">
-                A digital green platform connecting farmers, knowledge, and organic resources for eco-friendly farming.
-            </p>
-            <div class="mt-8 flex justify-center gap-4">
-                <a href="{{ url_for('products') }}" class="bg-green-600 px-6 py-3 rounded-full font-bold hover:bg-green-500 transition-all">Explore Marketplace</a>
-                <a href="{{ url_for('register') }}" class="bg-white text-green-600 px-6 py-3 rounded-full font-bold hover:bg-green-100 transition-all">Join Now</a>
-            </div>
+  
+
+ <!-- ============================================================
+ FOOTER
+ ============================================================ -->
+ <footer class="footer-bg pt-16 pb-10 px-6">
+ <div class="max-w-7xl mx-auto">
+
+ <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/5">
+ <!-- Brand -->
+ <div class="md:col-span-1">
+ <div class="flex items-center gap-2 mb-4">
+ <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block mr-1"></span>
+ <span class="font-black text-xl text-emerald-400" style="font-family: 'Outfit', sans-serif;">EcoHarvest</span>
+ </div>
+ <p class="text-gray-500 text-xs leading-relaxed">
+ AI-powered sustainable agriculture platform connecting farmers with knowledge, seeds, and expert guidance.
+ </p>
+ </div>
+
+ <!-- Platform -->
+ <div>
+ <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Platform</div>
+ <div class="space-y-2.5">
+ <a href="{{ url_for('ai_chat') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">AI Agronomist</a>
+ <a href="{{ url_for('crop') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Crop Guidance</a>
+ <a href="{{ url_for('products') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Seed Marketplace</a>
+ <a href="{{ url_for('farmers') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Expert Farmers</a>
+ </div>
+ </div>
+
+ <!-- Company -->
+         <!-- Account / Company -->
+        <div>
+          <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Account</div>
+          <div class="space-y-2.5">
+            {% if session.get('user_id') is not none %}
+            <a href="{{ url_for('products') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Seed Marketplace</a>
+            <a href="{{ url_for('logout') }}" class="block text-sm text-rose-400 hover:text-rose-300 transition-colors">Logout</a>
+            {% else %}
+            <a href="{{ url_for('register') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Register</a>
+            <a href="{{ url_for('login') }}" class="block text-sm text-gray-400 hover:text-emerald-400 transition-colors">Login</a>
+            {% endif %}
+          </div>
         </div>
-    </section>
 
-    <section class="py-24 px-6 bg-black/30">
-        <div class="max-w-7xl mx-auto text-center">
-            <h2 class="text-4xl font-extrabold text-white uppercase tracking-tighter text-shadow">Platform Features</h2>
-            <div class="h-1.5 w-24 bg-green-500 mx-auto mt-4 rounded-full"></div>
+ <!-- Tech Stack -->
+ <div>
+ <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Powered By</div>
+ <div class="space-y-2">
+ <div class="text-sm text-gray-500 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> Wikipedia REST API</div>
+ <div class="text-sm text-gray-500 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> Open-Meteo Weather</div>
+ <div class="text-sm text-gray-500 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> PlantNet Vision</div>
+ <div class="text-sm text-gray-500 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> Flask / Python</div>
+ </div>
+ </div>
+ </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mt-12">
-                <div id="ai-chatbot" class="feature-card p-10 rounded-[2.5rem] shadow-sm hover:border-green-400 transition-all">
-                    <div class="text-5xl mb-6">🤖</div>
-                    <h3 class="text-2xl font-bold text-green-400 mb-4">AI Chatbot</h3>
-                    <p class="text-gray-100">Get AI-powered plantation guidance and farming practices.</p>
-                </div>
-                <div id="crop-guidance" class="feature-card p-10 rounded-[2.5rem] shadow-sm hover:border-green-400 transition-all">
-                    <div class="text-5xl mb-6">🌱</div>
-                    <h3 class="text-2xl font-bold text-green-400 mb-4">Crop Guidance</h3>
-                    <p class="text-gray-100">Step-by-step instructions for home and terrace farming.</p>
-                </div>
-                <div id="seed-marketplace" class="feature-card p-10 rounded-[2.5rem] shadow-sm hover:border-green-400 transition-all">
-                    <div class="text-5xl mb-6">🤝</div>
-                    <h3 class="text-2xl font-bold text-green-400 mb-4">Seed Network</h3>
-                    <p class="text-gray-100">Connect with verified organic seed sellers.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+ <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-600">
+ <span>© 2026 EcoHarvest. All rights reserved.</span>
+ <span>Built for a sustainable agricultural future </span>
+ </div>
+ </div>
+ </footer>
 
-    <footer class="py-24 px-6 text-center">
-        <h3 class="text-2xl font-bold text-green-400 mb-4">NovaCoders</h3>
-        <p class="text-gray-300 text-sm tracking-widest uppercase mb-4">© 2026 EcoHarvest - Sustainable Digital Future </p>
-        <div class="h-1 w-12 bg-green-500 mx-auto rounded-full"></div>
-    </footer>
+ <!-- ============================================================
+ JS: Scroll Fade-In
+ ============================================================ -->
+ <script>
+ const observer = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting) {
+ entry.target.classList.add('visible');
+ }
+ });
+ }, { threshold: 0.12 });
 
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // 1. Mouse Follower Logic
-        const stalker = document.querySelector('.cursor-stalker');
-        const dot = document.querySelector('.cursor-dot');
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(stalker, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.3 });
-            gsap.to(dot, { x: e.clientX - 3, y: e.clientY - 3, duration: 0.1 });
-        });
-
-        // 2. Hover Interactions
-        document.querySelectorAll('a, button, .feature-card').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                gsap.to(stalker, { scale: 2.2, backgroundColor: 'rgba(74, 222, 128, 0.2)', borderColor: 'transparent', duration: 0.3 });
-                gsap.to(dot, { scale: 1.5, background: '#4ade80', duration: 0.3 });
-            });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(stalker, { scale: 1, backgroundColor: 'transparent', borderColor: '#4ade80', duration: 0.3 });
-                gsap.to(dot, { scale: 1, background: '#4ade80', duration: 0.3 });
-            });
-        });
-
-        // 3. Hero Entrance Timeline
-        const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-        tl.from(".nav-logo, .nav-item", { y: -30, opacity: 0, stagger: 0.1, duration: 0.8 })
-          .from(".hero-title", { y: 60, opacity: 0, duration: 1 }, "-=0.4")
-          .to(".hero-subtitle", { opacity: 1, y: 0, duration: 0.8 }, "-=0.6");
-
-        // 4. Feature Cards Visibility Fix
-        // Use fromTo to ensure the animation overrides any initial CSS hidden state
-        gsap.fromTo(".feature-card", 
-            { 
-                y: 60, 
-                opacity: 0 
-            },
-            {
-                scrollTrigger: {
-                    trigger: ".feature-card",
-                    start: "top 85%", // Triggers when the top of the cards reach 85% of screen height
-                    toggleActions: "play none none none"
-                },
-                y: 0, 
-                opacity: 1, 
-                stagger: 0.2, 
-                duration: 1,
-                ease: "power2.out"
-            }
-        );
-    </script>
+ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+ </script>
 </body>
 </html>
